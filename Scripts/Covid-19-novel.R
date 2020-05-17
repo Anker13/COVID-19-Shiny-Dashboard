@@ -8,7 +8,7 @@ library(sf)
 library(tigris)
 library(maps)
 #Static PATH to csv files from ohter github Repository
-PATH <- paste(getwd(),"/Sources/NovelCOVID-19/data",sep="")
+PATH <- paste(getwd(),"/Sources/covid-19/data",sep="")
 PATHTOJSON <- paste(getwd(),"/Sources/json",sep = "")
 
 #Make git pull with an .bat file in the Scripts Folder (should be local and not on remote github repository)

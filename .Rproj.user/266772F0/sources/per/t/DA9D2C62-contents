@@ -88,13 +88,6 @@ server <- function(input, output) {
                        popup = label)%>%
             addLegend("bottomright",pal = qpal,values = tmp_data$Confirmed,title = "Log Scale",opacity = 0.2)
     })
-  #  observeEvent(input$mymap_shape_click,{
-  #      tmp_data <- filter(data_from_github, data_from_github$Lat == input$mymap_shape_click$lat && data_from_github$Long == input$mymap_shape_click$lng)
-  #      output$plot<- renderPlot({
-  #          ggplot(tmp_data,aes(tmp_data$Date,tmp_data$Confirmed)) +
-  #              geom_bar()
-  #      },res=96)
-  #  })
   
     observe({
         tmp_data <- filter(data_from_github, data_from_github$Date == input$Times, data_from_github$Confirmed>0, data_from_github$Lat > 0 && data_from_github$Long > 0)

@@ -1,0 +1,3 @@
+[submodule "Sources/covid-19"]
+	path = Sources/covid-19
+	url = https://github.com/datasets/covid-19.git
