@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1588850975789.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "CEEDFBEE",
+    "lastKnownWriteTime" : 7885362534758641253,
+    "last_content_update" : 1588850975789,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "671FD8BA",
+        "caption" : "data_from_github",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=data_from_github&cache_key=671FD8BA",
+        "displayedObservations" : 27664,
+        "environment" : "",
+        "expression" : "data_from_github",
+        "object" : "data_from_github",
+        "preview" : 0,
+        "totalObservations" : 27664,
+        "variables" : 9
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

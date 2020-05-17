@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587809064781.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3700369887",
+    "id" : "DA9D2C62",
+    "lastKnownWriteTime" : 1588879489,
+    "last_content_update" : 1588879489639,
+    "path" : "H:/Hochschule/Hochschule/MasterProjekt/Data Science/Hochschule Kaiserslautern COVID-19 Dashboard/app.R",
+    "project_path" : "app.R",
+    "properties" : {
+        "cursorPosition" : "30,79",
+        "scrollLine" : "8"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
