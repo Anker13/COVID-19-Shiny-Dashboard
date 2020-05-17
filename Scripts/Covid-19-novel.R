@@ -11,9 +11,6 @@ library(maps)
 PATH <- paste(getwd(),"/Sources/covid-19/data",sep="")
 PATHTOJSON <- paste(getwd(),"/Sources/json",sep = "")
 
-#Make git pull with an .bat file in the Scripts Folder (should be local and not on remote github repository)
-d <- paste(getwd(),"/Scripts/GitUpdate.bat",sep = "")
-shell.exec(d)
 #Read the data from the github Repository 
 path_to_data <- paste(PATH,"/time-series-19-covid-combined.csv",sep = "")
 data_from_github <- read.csv(path_to_data,sep = ",")

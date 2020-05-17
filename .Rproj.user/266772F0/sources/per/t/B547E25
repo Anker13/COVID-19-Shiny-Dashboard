@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2162514590",
+    "hash" : "324874091",
     "id" : "B547E25",
-    "lastKnownWriteTime" : 1589711167,
-    "last_content_update" : 1589711167574,
+    "lastKnownWriteTime" : 1589726799,
+    "last_content_update" : 1589726799998,
     "path" : "H:/Hochschule/Hochschule/MasterProjekt/Data Science/Hochschule Kaiserslautern COVID-19 Dashboard/Scripts/Covid-19-novel.R",
     "project_path" : "Scripts/Covid-19-novel.R",
     "properties" : {
-        "cursorPosition" : "10,37",
+        "cursorPosition" : "27,0",
         "scrollLine" : "0"
     },
     "read_only" : false,
