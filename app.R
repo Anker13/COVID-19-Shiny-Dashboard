@@ -29,9 +29,20 @@ ui <- dashboardPage(
     dashboardSidebar(
       sidebarMenu(
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+        menuItem(timeslider<-sliderInput("Times",
+                              "Time Series",
+                              min = min(data_from_github$Date),
+                              max = max(data_from_github$Date),
+                              value = min(data_from_github$Date),
+                              timeFormat = "%d %b %Y")),
+        menuItem(country<-selectInput("country", "Choose a country:",
+                             list(`Country` = unique(data_from_github$Country)
+                                  )
+                             
+        )),
         menuItem("Statistic", tabName = "statistic", icon = icon("list")),
         
-        menuItem("Widgets", icon = icon("th"), tabName = "widgets",
+        menuItem("Glossar", icon = icon("th"), tabName = "glossar",
                  badgeLabel = "new", badgeColor = "green")
       )
     ),
@@ -39,14 +50,14 @@ ui <- dashboardPage(
       tabItems(
       tabItem(tabName = "dashboard",
         
-        fluidRow(column(width = 12),
-                 align = "center",
-                 sliderInput("Times",
-                             "Time Series",
-                             min = min(data_from_github$Date),
-                             max = max(data_from_github$Date),
-                             value = min(data_from_github$Date),
-                             timeFormat = "%d %b %Y")),
+       # fluidRow(column(width = 12),
+          #       align = "center",
+           #      sliderInput("Times",
+             #                "Time Series",
+              #               min = min(data_from_github$Date),
+              #               max = max(data_from_github$Date),
+               #              value = min(data_from_github$Date),
+                #             timeFormat = "%d %b %Y")),
         
         fluidRow(column(width = 12),
                  align ="center",
@@ -54,8 +65,21 @@ ui <- dashboardPage(
       ),
       tabItem(tabName = "statistic",
               
-            plotOutput("plot")
+          plotOutput("plot1"),
+          plotOutput("plot2"),
+          plotOutput("plot3")
+          
+         
+          
+          
+      ),
+      tabItem(tabName = "glossar",
+              
+              textOutput("selected_country"),
+              h2("Widgets tab content")
+            
       )
+      
     )
 )
 )
@@ -114,6 +138,38 @@ server <- function(input, output) {
                        color = ~qpal(tmp_data$logarithmic),
                        popup = label)%>%
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))
+        
+        
+      #  output$plot1<- renderPlot({
+       #   plot( data_from_github$Date, data_from_github$Confirmed )
+        #})
+        
+        countrydata <-filter(data_from_github, data_from_github$Country == input$country)
+       
+      #Confirmed 
+        output$plot1<- renderPlot({
+          ggplot(data=countrydata , aes(x=Date, y=Confirmed))+geom_step()+
+            geom_point()
+        })
+        #Recovered
+        output$plot2<- renderPlot({
+          ggplot(data=countrydata , aes(x=Date, y=Recovered))+geom_step()+
+            geom_point()
+        })
+        
+        #Dead People
+        output$plot3<- renderPlot({
+          ggplot(data=countrydata , aes(x=Date, y=Deaths))+geom_step()+
+            geom_point()
+        })
+        
+        
+        
+   
+        output$selected_country <- renderText({ 
+          paste("You have selected", input$country)
+        })
+        
     })
 }
 
