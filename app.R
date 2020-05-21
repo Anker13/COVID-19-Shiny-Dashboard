@@ -36,7 +36,8 @@ ui <- dashboardPage(
       )
     ),
     dashboardBody(
-      tabItem(tabName = "dasboard",
+      tabItems(
+      tabItem(tabName = "dashboard",
         
         fluidRow(column(width = 12),
                  align = "center",
@@ -51,11 +52,12 @@ ui <- dashboardPage(
                  align ="center",
                  leafletOutput(outputId = "mymap",width = 800))
       ),
-      tabItem(tabName = "Statistic",
+      tabItem(tabName = "statistic",
               
-              plotOutput("plot")
+            plotOutput("plot")
       )
     )
+)
 )
 
 # Define server logic required to draw a histogram
