@@ -48,7 +48,7 @@ ui <- dashboardPage(
     ),
     dashboardBody(
       tabItems(
-      tabItem(tabName = "dashboard",
+      tabItem(tabName = "Map",
         
        # fluidRow(column(width = 12),
           #       align = "center",
@@ -148,23 +148,15 @@ server <- function(input, output) {
        
       #Confirmed 
         output$plot1<- renderPlot({
-          ggplot(data=countrydata , aes(x=Date, y=Confirmed))+geom_step()+
-            geom_point()
+          ggplot(data=countrydata , aes(x=Date))+
+            geom_line(aes(y=Confirmed),color="Red")+
+            geom_line(aes(y=Recovered),color="chartreuse")+
+            geom_line(aes(y=Deaths),color="Black")+
+            theme(
+              legend.position = c(0.95,0.95),
+              legend.justification = c("right","top")
+            )
         })
-        #Recovered
-        output$plot2<- renderPlot({
-          ggplot(data=countrydata , aes(x=Date, y=Recovered))+geom_step()+
-            geom_point()
-        })
-        
-        #Dead People
-        output$plot3<- renderPlot({
-          ggplot(data=countrydata , aes(x=Date, y=Deaths))+geom_step()+
-            geom_point()
-        })
-        
-        
-        
    
         output$selected_country <- renderText({ 
           paste("You have selected", input$country)

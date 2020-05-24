@@ -29,33 +29,59 @@ ui <- dashboardPage(
     dashboardSidebar(
       sidebarMenu(
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+        menuItem(timeslider<-sliderInput("Times",
+                              "Time Series",
+                              min = min(data_from_github$Date),
+                              max = max(data_from_github$Date),
+                              value = min(data_from_github$Date),
+                              timeFormat = "%d %b %Y")),
+        menuItem(country<-selectInput("country", "Choose a country:",
+                             list(`Country` = unique(data_from_github$Country)
+                                  )
+                             
+        )),
         menuItem("Statistic", tabName = "statistic", icon = icon("list")),
         
-        menuItem("Widgets", icon = icon("th"), tabName = "widgets",
+        menuItem("Glossar", icon = icon("th"), tabName = "glossar",
                  badgeLabel = "new", badgeColor = "green")
       )
     ),
     dashboardBody(
-      tabItem(tabName = "dasboard",
+      tabItems(
+      tabItem(tabName = "Map",
         
-        fluidRow(column(width = 12),
-                 align = "center",
-                 sliderInput("Times",
-                             "Time Series",
-                             min = min(data_from_github$Date),
-                             max = max(data_from_github$Date),
-                             value = min(data_from_github$Date),
-                             timeFormat = "%d %b %Y")),
+       # fluidRow(column(width = 12),
+          #       align = "center",
+           #      sliderInput("Times",
+             #                "Time Series",
+              #               min = min(data_from_github$Date),
+              #               max = max(data_from_github$Date),
+               #              value = min(data_from_github$Date),
+                #             timeFormat = "%d %b %Y")),
         
         fluidRow(column(width = 12),
                  align ="center",
                  leafletOutput(outputId = "mymap",width = 800))
       ),
-      tabItem(tabName = "Statistic",
+      tabItem(tabName = "statistic",
               
-              plotOutput("plot")
+          plotOutput("plot1"),
+          plotOutput("plot2"),
+          plotOutput("plot3")
+          
+         
+          
+          
+      ),
+      tabItem(tabName = "glossar",
+              
+              textOutput("selected_country"),
+              h2("Widgets tab content")
+            
       )
+      
     )
+)
 )
 
 # Define server logic required to draw a histogram
@@ -112,6 +138,30 @@ server <- function(input, output) {
                        color = ~qpal(tmp_data$logarithmic),
                        popup = label)%>%
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))
+        
+        
+      #  output$plot1<- renderPlot({
+       #   plot( data_from_github$Date, data_from_github$Confirmed )
+        #})
+        
+        countrydata <-filter(data_from_github, data_from_github$Country == input$country)
+       
+      #Confirmed 
+        output$plot1<- renderPlot({
+          ggplot(data=countrydata , aes(x=Date))+
+            geom_line(aes(y=Confirmed),color="Red")+
+            geom_line(aes(y=Recovered),color="chartreuse")+
+            geom_line(aes(y=Deaths),color="Black")+
+            theme(
+              legend.position = c(0.95,0.95),
+              legend.justification = c("right","top")
+            )
+        })
+   
+        output$selected_country <- renderText({ 
+          paste("You have selected", input$country)
+        })
+        
     })
 }
 
