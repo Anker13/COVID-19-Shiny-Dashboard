@@ -134,12 +134,7 @@ server <- function(input, output) {
                        color = ~qpal(tmp_data$logarithmic),
                        popup = label)%>%
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))
-        
-        
-      #  output$plot1<- renderPlot({
-       #   plot( data_from_github$Date, data_from_github$Confirmed )
-        #})
-        
+
         countrydata <-filter(data_from_github, data_from_github$Country == input$country, data_from_github$Date <= input$Times)
        
       #Confirmed 
