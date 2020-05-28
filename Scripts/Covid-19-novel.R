@@ -26,7 +26,9 @@ path_to_population_data <- paste(PATH,"/reference.csv",sep= "")
 population_data <- read.csv(path_to_population_data,sep = ",")
 population_data$Population[is.na(population_data$Population)] <- 0
 #group by expression to get total amount of population in country. Problem: There was NA´s in the population col of the dataset, they were set to 0.
-population <- population_data %>% group_by(Country_Region)%>% summarise(Population = sum(as.numeric(Population)))
+population <- filter(population_data,!duplicated(population_data$Country_Region))
+population <- population %>% group_by(Country_Region)%>% summarise(Population = sum(as.numeric(Population)))
+population$Population <- as.numeric(population$Population)
 #prepare for inner_join with @data_from_github 
 colnames(population)[1]<-"Country"
 population$Country <- as.character(population$Country)

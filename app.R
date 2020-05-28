@@ -165,7 +165,7 @@ server <- function(input, output) {
         })
         output$allcasemort <- renderPlotly({
           ggplotly(
-            ggplot(data=countrydata,aes(x = Date, y = all_case_mortality_100k, color="deepskyblue"))+
+            ggplot(data=countrydata,aes(x = Date, y = all_case_mortality_100k))+
               geom_line()+
               geom_point()+
               labs(title ="All Case Mortality", x = "Date", y = "All Case Mortality (per 100.000 people)")
@@ -173,7 +173,7 @@ server <- function(input, output) {
         })
         output$casefatalityrate <- renderPlotly({
           ggplotly(
-            ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate, color="deepksyblue"))+
+            ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate))+
               geom_line()+
               geom_point()+
               labs(title = "Case Fatality Rate", x = "Date", y= "Case Fatality Rate")
