@@ -53,23 +53,18 @@ ui <- dashboardPage(
         fluidRow(box(title = "World Map",
                      width = 8,
                      height = '80vh',
-                     leafletOutput(outputId = "mymap",height = '40vh')),
+                     leafletOutput(outputId = "mymap",height = '80vh')),
                  align ="center"
                  )
       ),
       tabItem(tabName = "statistic",
               splitLayout(plotlyOutput("plot1", height = '40vh'),
-                          box(title = "Epidemiological measures",
+                          tabBox(title = "Epidemiological measures",
                               width = 10,
-                              height = '100vh',
-                              status = "warning",
-                              solidHeader = TRUE,
-                              collapsible = TRUE,
-                              plotlyOutput("prevelance", height = '30vh'),
-                              br(),
-                              plotlyOutput("allcasemort", height = '30vh'),
-                              br(),
-                              plotlyOutput("casefatalityrate", height = '30vh')
+                              height = '40vh',
+                              tabPanel("Prevelance",  plotlyOutput("prevelance")),
+                              tabPanel("All Case Mortality",plotlyOutput("allcasemort")),
+                              tabPanel("Case Fatality Rate",plotlyOutput("casefatalityrate"))
                               ))
           
           
@@ -175,7 +170,7 @@ server <- function(input, output) {
         })
         output$allcasemort <- renderPlotly({
           ggplotly(
-            ggplot(data=countrydata,aes(x = Date, y = all_case_mortality_100k))+
+            ggplot(data=countrydata,aes(x = Date, y = all_case_mortality_100k, color="deepskyblue"))+
               geom_line()+
               geom_point()+
               labs(title ="All Case Mortality", x = "Date", y = "All Case Mortality (per 100.000 people)")
@@ -183,7 +178,7 @@ server <- function(input, output) {
         })
         output$casefatalityrate <- renderPlotly({
           ggplotly(
-            ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate))+
+            ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate, color="deepksyblue"))+
               geom_line()+
               geom_point()+
               labs(title = "Case Fatality Rate", x = "Date", y= "Case Fatality Rate")
