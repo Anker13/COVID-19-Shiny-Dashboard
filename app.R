@@ -75,8 +75,9 @@ ui <- dashboardPage(
       ),
       tabItem(tabName = "glossar",
               
-              textOutput("selected_country"),
-              h2("Widgets tab content")
+              #textOutput("selected_country"),
+              h2("Glossar"),
+              tableOutput('glossartable')
             
       )
       
@@ -86,7 +87,7 @@ ui <- dashboardPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-    
+   
     
     output$mymap <- renderLeaflet({
         tmp_data <- filter(data_from_github, data_from_github$Date == input$Times, data_from_github$Confirmed>0,data_from_github$Lat > 0 && data_from_github$Long > 0)
@@ -163,6 +164,8 @@ server <- function(input, output) {
         })
         
     })
+    
+    output$glossartable<-renderTable(glossar)
 }
 
 # Run the application 

@@ -13,6 +13,8 @@ PATHTOJSON <- paste(getwd(),"/Sources/json",sep = "")
 
 #Read the data from the github Repository 
 path_to_data <- paste(PATH,"/time-series-19-covid-combined.csv",sep = "")
+path_to_glossar <-paste(PATH,"/glossar.csv",sep = "")
+glossar <-read.csv(path_to_glossar,sep = ";")
 data_from_github <- read.csv(path_to_data,sep = ",")
 data_from_github$Date <- as.Date(data_from_github$Date)
 data_from_github$Country.Region <- as.character(data_from_github$Country.Region)
@@ -28,3 +30,4 @@ colnames(data_from_github)[3]<-"Province"
 data_from_github <- mutate(data_from_github, logarithmic = log(data_from_github$Confirmed))
 data_from_github$Recovered[is.na(data_from_github$Recovered)]<- 0
 data_from_github$logarithmic[is.infinite(data_from_github$logarithmic)]<- -1
+
