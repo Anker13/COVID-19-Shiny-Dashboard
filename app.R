@@ -15,7 +15,7 @@ library(dplyr)
 library(rgdal)
 library(shinydashboard)
 library(tigris)
-
+library(plotly)
 title <- tags$a(href='https://www.hs-kl.de/', target="_blank", style = "color: rgb(255,255,255); text-align: bottom",
                 tags$img(src= "https://upload.wikimedia.org/wikipedia/commons/5/5e/Logo_of_Hochschule_Kaiserslautern.png",height= '40', width= '76.8',style ="vertical-align: top"),
                 'CoVid-19')
@@ -28,7 +28,7 @@ ui <- dashboardPage(
     dashboardHeader(title=title),
     dashboardSidebar(
       sidebarMenu(
-        menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+        menuItem("Dashboard", tabName = "Map", icon = icon("dashboard")),
         menuItem(timeslider<-sliderInput("Times",
                               "Time Series",
                               min = min(data_from_github$Date),
@@ -50,26 +50,27 @@ ui <- dashboardPage(
       tabItems(
       tabItem(tabName = "Map",
         
-       # fluidRow(column(width = 12),
-          #       align = "center",
-           #      sliderInput("Times",
-             #                "Time Series",
-              #               min = min(data_from_github$Date),
-              #               max = max(data_from_github$Date),
-               #              value = min(data_from_github$Date),
-                #             timeFormat = "%d %b %Y")),
-        
-        fluidRow(column(width = 12),
-                 align ="center",
-                 leafletOutput(outputId = "mymap",width = 800))
+        fluidRow(box(title = "World Map",
+                     width = 8,
+                     height = '80vh',
+                     leafletOutput(outputId = "mymap",height = '40vh')),
+                 align ="center"
+                 )
       ),
       tabItem(tabName = "statistic",
-              
-          plotOutput("plot1"),
-          plotOutput("plot2"),
-          plotOutput("plot3")
-          
-         
+              splitLayout(plotlyOutput("plot1", height = '40vh'),
+                          box(title = "Epidemiological measures",
+                              width = 10,
+                              height = '100vh',
+                              status = "warning",
+                              solidHeader = TRUE,
+                              collapsible = TRUE,
+                              plotlyOutput("prevelance", height = '30vh'),
+                              br(),
+                              plotlyOutput("allcasemort", height = '30vh'),
+                              br(),
+                              plotlyOutput("casefatalityrate", height = '30vh')
+                              ))
           
           
       ),
@@ -114,7 +115,7 @@ server <- function(input, output) {
                        popup = label)%>%
             addLegend("bottomright",pal = qpal,values = tmp_data$Confirmed,title = "Log Scale",opacity = 0.2)
     })
-  
+   
     observe({
         tmp_data <- filter(data_from_github, data_from_github$Date == input$Times, data_from_github$Confirmed>0, data_from_github$Lat > 0 && data_from_github$Long > 0)
         qpal <- colorBin(palette = c("#FFD82E","#E8A115","#FF8E24","#E84D15","#FF1408","#761408","#5A1408"),domain = tmp_data$logarithmic, n=12)
@@ -144,20 +145,50 @@ server <- function(input, output) {
        #   plot( data_from_github$Date, data_from_github$Confirmed )
         #})
         
-        countrydata <-filter(data_from_github, data_from_github$Country == input$country)
+        countrydata <-filter(data_from_github, data_from_github$Country == input$country, data_from_github$Date <= input$Times)
        
       #Confirmed 
-        output$plot1<- renderPlot({
-          ggplot(data=countrydata , aes(x=Date))+
-            geom_line(aes(y=Confirmed),color="Red")+
-            geom_line(aes(y=Recovered),color="chartreuse")+
-            geom_line(aes(y=Deaths),color="Black")+
-            theme(
-              legend.position = c(0.95,0.95),
-              legend.justification = c("right","top")
+        output$plot1<- renderPlotly({
+            ggplotly(
+              ggplot(data=countrydata)+
+                geom_line(aes(x = Date, y = Confirmed, color="Red"))+
+                geom_point(aes(x = Date, y = Confirmed, color="Red"))+
+                geom_line(aes(x = Date, y = Recovered, color="chartreuse"))+
+                geom_point(aes(x = Date, y = Recovered, color="chartreuse"))+
+                geom_line(aes(x = Date, y = Deaths, color="Black"))+
+                geom_point(aes(x = Date, y = Deaths, color="Black"))+
+                scale_color_identity(name ="Cases",
+                                     breaks =c("Red", "chartreuse", "Black"),
+                                     labels =c("Confirmed","Recovered","Deaths"),
+                                     guide = "legend")+
+                labs(title = paste("Covid-19 Cases in ", input$country, "(Population:",countrydata$Population,")",sep = ""), subtitle = format(input$Times, "%x"), y = "People", x="Date")+
+                theme(legend.position = "top")
             )
         })
-   
+        output$prevelance <- renderPlotly({
+          ggplotly(
+            ggplot(data=countrydata,aes(x= Date, y = prevelance_100k))+
+              geom_line()+
+              geom_point()+
+              labs(title = "Prevelance", x="Date", y="Prevelance (per 100.000 People)")
+          )
+        })
+        output$allcasemort <- renderPlotly({
+          ggplotly(
+            ggplot(data=countrydata,aes(x = Date, y = all_case_mortality_100k))+
+              geom_line()+
+              geom_point()+
+              labs(title ="All Case Mortality", x = "Date", y = "All Case Mortality (per 100.000 people)")
+          )
+        })
+        output$casefatalityrate <- renderPlotly({
+          ggplotly(
+            ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate))+
+              geom_line()+
+              geom_point()+
+              labs(title = "Case Fatality Rate", x = "Date", y= "Case Fatality Rate")
+          )
+        })
         output$selected_country <- renderText({ 
           paste("You have selected", input$country)
         })
