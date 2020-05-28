@@ -48,7 +48,7 @@ ui <- dashboardPage(
     ),
     dashboardBody(
       tabItems(
-      tabItem(tabName = "Map",
+      tabItem(tabName = "dashboard",
         
        # fluidRow(column(width = 12),
           #       align = "center",
