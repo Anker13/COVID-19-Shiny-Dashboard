@@ -136,7 +136,7 @@ server <- function(input, output) {
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))
 
         countrydata <-filter(data_from_github, data_from_github$Country == input$country, data_from_github$Date <= input$Times)
-       
+    
       #Confirmed 
         output$plot1<- renderPlotly({
             ggplotly(
@@ -176,7 +176,7 @@ server <- function(input, output) {
             ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate))+
               geom_line()+
               geom_point()+
-              labs(title = "Case Fatality Rate", x = "Date", y= "Case Fatality Rate")
+              labs(title = "Case Fatality Rate", x = "Date", y= "Case Fatality Rate (%)")
           )
         })
         output$selected_country <- renderText({ 
