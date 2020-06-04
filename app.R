@@ -40,6 +40,7 @@ ui <- dashboardPage(
                                   )
                              
         )),
+        htmlOutput("States"),
         menuItem("Statistic", tabName = "statistic", icon = icon("list")),
         
         menuItem("Glossar", icon = icon("th"), tabName = "glossar",
@@ -82,7 +83,13 @@ ui <- dashboardPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-    
+  output$States <- renderUI({
+    if(length(unique(Splitted_Global_DF[[input$country]]$Province))>1){
+      menuItem(province <- selectInput("state",
+                                       "States:",
+                                       list(`State`= unique(Splitted_Global_DF[[input$country]]$Province))))  
+    }
+  })
     
     output$mymap <- renderLeaflet({
         tmp_data <- filter(data_from_github, data_from_github$Date == input$Times, data_from_github$Confirmed>0,data_from_github$Lat > 0 && data_from_github$Long > 0)
@@ -134,9 +141,10 @@ server <- function(input, output) {
                        color = ~qpal(tmp_data$logarithmic),
                        popup = label)%>%
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))
-
-        countrydata <-filter(data_from_github, data_from_github$Country == input$country, data_from_github$Date <= input$Times)
-    
+        countrydata<-filter(Splitted_Global_DF[[input$country]],Splitted_Global_DF[[input$country]]$Date <= input$Times)
+        if(!is_null(input$state)){
+          countrydata <-filter(Splitted_Global_DF[[input$country]],Splitted_Global_DF[[input$country]]$Province == input$state, Splitted_Global_DF[[input$country]]$Date <= input$Times)
+        }
       #Confirmed 
         output$plot1<- renderPlotly({
             ggplotly(

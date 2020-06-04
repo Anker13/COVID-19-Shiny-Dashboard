@@ -3,7 +3,7 @@ library(utils)
 library(leaflet)
 library(dplyr)
 library(tigris)
-
+library(stringi)
 #Static PATH to csv files from ohter github Repository
 PATH <- paste(getwd(),"/Sources/covid-19/data",sep="")
 
@@ -24,11 +24,12 @@ colnames(data_from_github)[3]<-"Province"
 data_from_github$Confirmed <- as.numeric(data_from_github$Confirmed)
 data_from_github$Recovered <- as.numeric(data_from_github$Recovered)
 data_from_github$Deaths <- as.numeric(data_from_github$Deaths)
+data_from_github$Province <- as.character(data_from_github$Province)
 #handling NA´s for later calculations
 data_from_github$Recovered[is.na(data_from_github$Recovered)]<- 0
 data_from_github$Deaths[is.na(data_from_github$Deaths)]<- 0
 data_from_github$Confirmed[is.na(data_from_github$Confirmed)]<- 0
-
+data_from_github$Province[stri_isempty(data_from_github$Province)]<- "None"
 #get population data from reference.csv file
 path_to_population_data <- paste(PATH,"/reference.csv",sep= "")
 population_data <- read.csv(path_to_population_data,sep = ",")
@@ -73,3 +74,8 @@ data_from_github$all_case_mortality_100k[is.infinite(data_from_github$all_case_m
 data_from_github$case_fatality_rate[is.na(data_from_github$case_fatality_rate)]<- 0
 data_from_github$case_fatality_rate[is.infinite(data_from_github$case_fatality_rate)]<- 0
 
+Splitted_Global_DF <- split(data_from_github, data_from_github$Country)
+
+GB <- filter(Splitted_Global_DF[["United Kingdom"]], Splitted_Global_DF[["United Kingdom"]]$Province == "Anguilla")
+
+countrydata <-filter(Splitted_Global_DF[["Afghanistan"]], Splitted_Global_DF[["Afghanistan"]]$Date <= "2020-03-15", Splitted_Global_DF[["Afghanistan"]]$Province == "")
