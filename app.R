@@ -15,10 +15,41 @@ library(dplyr)
 library(rgdal)
 library(shinydashboard)
 library(tigris)
-
+library(plotly)
 title <- tags$a(href='https://www.hs-kl.de/', target="_blank", style = "color: rgb(255,255,255); text-align: bottom",
                 tags$img(src= "https://upload.wikimedia.org/wikipedia/commons/5/5e/Logo_of_Hochschule_Kaiserslautern.png",height= '40', width= '76.8',style ="vertical-align: top"),
                 'CoVid-19')
+
+values <- rbind(c('Salaries', 'Office', 'Merchandise', 'Legal', '<b>TOTAL<br>EXPENSES</b>'), c("Lorem ipsum dolor sit amet, tollit discere inermis pri ut. Eos ea iusto timeam, an prima laboramus vim. Id usu aeterno adversarium, summo mollis timeam vel ad", 
+                                                                                               "Lorem ipsum dolor sit amet, tollit discere inermis pri ut. Eos ea iusto timeam, an prima laboramus vim. Id usu aeterno adversarium, summo mollis timeam vel ad", 
+                                                                                               "Lorem ipsum dolor sit amet, tollit discere inermis pri ut. Eos ea iusto timeam, an prima laboramus vim. Id usu aeterno adversarium, summo mollis timeam vel ad", 
+                                                                                               "Lorem ipsum dolor sit amet, tollit discere inermis pri ut. Eos ea iusto timeam, an prima laboramus vim. Id usu aeterno adversarium, summo mollis timeam vel ad", 
+                                                                                               "Lorem ipsum dolor sit amet, tollit discere inermis pri ut. Eos ea iusto timeam, an prima laboramus vim. Id usu aeterno adversarium, summo mollis timeam vel ad"))
+
+fig <- plot_ly(
+  type = 'table',
+  height = 800,
+  columnorder = c(1,2),
+  columnwidth = c(10,90),
+  header = list(
+    values = c('<b>Keyword</b>', '<b>DESCRIPTION</b>'),
+    line = list(color = '#506784'),
+    fill = list(color = '#119DFF'),
+    align = c('left','center'),
+    font = list(color = 'white', size = 12),
+    height = 40
+  ),
+  cells = list(
+    values = rbind(
+      t(as.matrix(unname(glossar)))
+    ),
+    line = list(color = '#506784'),
+    fill = list(color = c('#25FEFD', 'white')),
+    align = c('left', 'left'),
+    font = list(color = c('#506784'), size = 12),
+    height = 30
+  ))
+
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage(
@@ -77,8 +108,8 @@ ui <- dashboardPage(
               
               #textOutput("selected_country"),
               h2("Glossar"),
-              tableOutput('glossartable')
-            
+             # tableOutput('glossartable')
+            fig
       )
       
     )
@@ -164,9 +195,16 @@ server <- function(input, output) {
         })
         
     })
+  
     
-    output$glossartable<-renderTable(glossar)
+  
+    
+    
+ 
+    
+  #  output$glossartable<-renderTable(glossar)
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
