@@ -16,6 +16,8 @@ library(rgdal)
 library(shinydashboard)
 library(tigris)
 library(plotly)
+library(forecast)
+library(lubridate)
 title <- tags$a(href='https://www.hs-kl.de/', target="_blank", style = "color: rgb(255,255,255); text-align: bottom",
                 tags$img(src= "https://upload.wikimedia.org/wikipedia/commons/5/5e/Logo_of_Hochschule_Kaiserslautern.png",height= '40', width= '76.8',style ="vertical-align: top"),
                 'CoVid-19')
@@ -42,6 +44,7 @@ ui <- dashboardPage(
         )),
         htmlOutput("States"),
         menuItem("Statistic", tabName = "statistic", icon = icon("list")),
+        menuItem("Forecasts", tabName = "forecasts", icon = icon("list")),
         
         menuItem("Glossar", icon = icon("th"), tabName = "glossar",
                  badgeLabel = "new", badgeColor = "green")
@@ -69,6 +72,14 @@ ui <- dashboardPage(
                               ))
           
           
+      ),
+      tabItem(tabName="forecasts",
+              tabBox(title="Forecasts",
+                     width= 10,
+                     height='80vh',
+                     tabPanel("Forecast Confirmed Cases",plotlyOutput("forecast_confirmed", height = '60vh')),
+                     tabPanel("Forecast Death Cases", plotlyOutput("forecast_deaths", height = '60vh')),
+                     tabPanel("Forecast Recovered Cases", plotlyOutput("forecast_recovered",height = '60vh')))
       ),
       tabItem(tabName = "glossar",
               
@@ -143,8 +154,38 @@ server <- function(input, output) {
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))
         countrydata<-filter(Splitted_Global_DF[[input$country]],Splitted_Global_DF[[input$country]]$Date <= input$Times)
         if(!is_null(input$state)){
-          countrydata <-filter(Splitted_Global_DF[[input$country]],Splitted_Global_DF[[input$country]]$Province == input$state, Splitted_Global_DF[[input$country]]$Date <= input$Times)
+          if(input$state %in% Splitted_Global_DF[[input$country]]$Province){
+            countrydata <-filter(Splitted_Global_DF[[input$country]],Splitted_Global_DF[[input$country]]$Province == input$state, Splitted_Global_DF[[input$country]]$Date <= input$Times)
+          }
         }
+        countrynotimedata <- filter(Splitted_Global_DF[[input$country]])
+        if(!is_null(input$state)){
+          if(input$state %in% Splitted_Global_DF[[input$country]]$Province){
+            countrynotimedata <- filter(Splitted_Global_DF[[input$country]],Splitted_Global_DF[[input$country]]$Province == input$state)
+          }
+        }
+      #create time series objects for forecasting operations
+        countrynotimedata_TS_Confirmed <- structure(list(date = countrynotimedata$Date, confirmed = round(countrynotimedata$Confirmed, digits = 0)))
+        countrynotimedata_TS_Deaths <- structure(list(date = countrynotimedata$Date, deaths = round(countrynotimedata$Deaths, digits = 0)))
+        countrynotimedata_TS_Recovered <- structure(list(date = countrynotimedata$Date, recovered = round(countrynotimedata$Recovered, digits=0)))
+      #fitting TS Objects
+        countrynotimedata_FIT_Confirmed <- auto.arima(countrynotimedata_TS_Confirmed$confirmed)
+        countrynotimedata_FIT_Deaths <- auto.arima(countrynotimedata_TS_Deaths$deaths)
+        countrynotimedata_FIT_Recovered <- auto.arima(countrynotimedata_TS_Recovered$recovered)
+      #conditions for forecasting
+        forecast_length <- 14
+      #forecasting using package forecast. With Method "ARIMA"
+        countrynotimedata_FORECAST_Confirmed <- forecast(countrynotimedata_FIT_Confirmed, h = forecast_length)
+        countrynotimedata_FORECAST_Deaths <- forecast(countrynotimedata_FIT_Deaths, h = forecast_length)
+        countrynotimedata_FORECAST_Recovered <- forecast(countrynotimedata_FIT_Recovered, h = forecast_length)
+      #generate sequence of dates for later plotly graphy
+        countrynotimedata_FORECAST_Confirmed.date <- seq(as.POSIXct(countrynotimedata_TS_Confirmed$date[length(countrynotimedata_TS_Confirmed$date)]),by=countrynotimedata_TS_Confirmed$date[length(countrynotimedata_TS_Confirmed$date)]-countrynotimedata_TS_Confirmed$date[length(countrynotimedata_TS_Confirmed$date)-1], len = forecast_length)
+        countrynotimedata_FORECAST_Deaths.date <- seq(as.POSIXct(countrynotimedata_TS_Deaths$date[length(countrynotimedata_TS_Deaths$date)]),by=countrynotimedata_TS_Deaths$date[length(countrynotimedata_TS_Deaths$date)]-countrynotimedata_TS_Deaths$date[length(countrynotimedata_TS_Deaths$date)-1], len = forecast_length)
+        countrynotimedata_FORECAST_Recovered.date <- seq(as.POSIXct(countrynotimedata_TS_Recovered$date[length(countrynotimedata_TS_Recovered$date)]),by=countrynotimedata_TS_Recovered$date[length(countrynotimedata_TS_Recovered$date)]-countrynotimedata_TS_Recovered$date[length(countrynotimedata_TS_Recovered$date)-1], len = forecast_length)
+      #formatting generated sequence of dates
+        countrynotimedata_FORECAST_Confirmed.date <- format(countrynotimedata_FORECAST_Confirmed.date, "%Y-%m-%d")
+        countrynotimedata_FORECAST_Deaths.date <- format(countrynotimedata_FORECAST_Deaths.date, "%Y-%m-%d")
+        countrynotimedata_FORECAST_Recovered.date <- format(countrynotimedata_FORECAST_Recovered.date, "%Y-%m-%d")
       #Confirmed 
         output$plot1<- renderPlotly({
             ggplotly(
@@ -163,6 +204,7 @@ server <- function(input, output) {
                 theme(legend.position = "top")
             )
         })
+        #Prevelance plotly graph
         output$prevelance <- renderPlotly({
           ggplotly(
             ggplot(data=countrydata,aes(x= Date, y = prevelance_100k))+
@@ -171,6 +213,7 @@ server <- function(input, output) {
               labs(title = "Prevelance", x="Date", y="Prevelance (per 100.000 People)")
           )
         })
+        # all case mortality plotly graph
         output$allcasemort <- renderPlotly({
           ggplotly(
             ggplot(data=countrydata,aes(x = Date, y = all_case_mortality_100k))+
@@ -179,6 +222,7 @@ server <- function(input, output) {
               labs(title ="All Case Mortality", x = "Date", y = "All Case Mortality (per 100.000 people)")
           )
         })
+        # case fatality rate plotly graph
         output$casefatalityrate <- renderPlotly({
           ggplotly(
             ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate))+
@@ -187,6 +231,35 @@ server <- function(input, output) {
               labs(title = "Case Fatality Rate", x = "Date", y= "Case Fatality Rate (%)")
           )
         })
+        # forecast for Confirmed Cases plotly graph
+        output$forecast_confirmed <- renderPlotly({
+          plot_ly(data = as.data.frame(countrynotimedata_TS_Confirmed))%>%
+            add_lines(x = ~countrynotimedata_TS_Confirmed$date, y = ~countrynotimedata_TS_Confirmed$confirmed, color=I("red"), name="Confirmed Cases")%>%
+            add_ribbons(x = ~countrynotimedata_FORECAST_Confirmed.date, ymin = ~round(countrynotimedata_FORECAST_Confirmed$lower[,2],digits=0), ymax = ~round(countrynotimedata_FORECAST_Confirmed$upper[,2], digits = 0), color=I("gray95"), name ="95% confidence")%>%
+            add_ribbons(x = ~countrynotimedata_FORECAST_Confirmed.date, ymin = ~round(countrynotimedata_FORECAST_Confirmed$lower[,1],digits=0), ymax = ~round(countrynotimedata_FORECAST_Confirmed$upper[,1], digits = 0), color=I("gray80"), name ="80% confidence")%>%
+            add_lines(x = ~countrynotimedata_FORECAST_Confirmed.date, y = ~round(countrynotimedata_FORECAST_Confirmed$mean, digits = 0), color=I("blue"), name="prediction")%>%
+            layout(title="Forecast Confirmed Cases")
+        })
+        # forecast for death cases plotly graph
+        output$forecast_deaths <- renderPlotly({
+          plot_ly(data = as.data.frame(countrynotimedata_TS_Deaths))%>%
+            add_lines(x = ~countrynotimedata_TS_Deaths$date, y = ~countrynotimedata_TS_Deaths$deaths, color=I("black"), name="Death Cases")%>%
+            add_ribbons(x = ~countrynotimedata_FORECAST_Deaths.date, ymin = ~round(countrynotimedata_FORECAST_Deaths$lower[,2], digits = 0), ymax = ~round(countrynotimedata_FORECAST_Deaths$upper[,2],digits=0), color=I("gray95"), name ="95% confidence")%>%
+            add_ribbons(x = ~countrynotimedata_FORECAST_Deaths.date, ymin = ~round(countrynotimedata_FORECAST_Deaths$lower[,1], digits = 0), ymax = ~round(countrynotimedata_FORECAST_Deaths$upper[,1], digits=0), color=I("gray80"), name ="80% confidence")%>%
+            add_lines(x = ~countrynotimedata_FORECAST_Deaths.date, y = ~round(countrynotimedata_FORECAST_Deaths$mean, digits=0), color=I("blue"), name="prediction")%>%
+            layout(title="Forecast Death Cases")
+        })
+        
+        #forecast for resurrected cases plotly graph
+        output$forecast_recovered <- renderPlotly({
+          plot_ly(data = as.data.frame(countrynotimedata_TS_Recovered))%>%
+            add_lines(x = ~countrynotimedata_TS_Recovered$date, y = ~round(countrynotimedata_TS_Recovered$recovered, digits = 0), color=I("green"), name="Recovered Cases")%>%
+            add_ribbons(x = ~countrynotimedata_FORECAST_Recovered.date, ymin = ~round(countrynotimedata_FORECAST_Recovered$lower[,2],digits = 0), ymax = ~round(countrynotimedata_FORECAST_Recovered$upper[,2], digits = 0), color=I("gray95"), name ="95% confidence")%>%
+            add_ribbons(x = ~countrynotimedata_FORECAST_Recovered.date, ymin = ~round(countrynotimedata_FORECAST_Recovered$lower[,1],digits = 0), ymax = ~round(countrynotimedata_FORECAST_Recovered$upper[,1], digits = 0), color=I("gray80"), name ="80% confidence")%>%
+            add_lines(x = ~countrynotimedata_FORECAST_Recovered.date, y = ~round(countrynotimedata_FORECAST_Recovered$mean, digits = 0), color=I("blue"), name="prediction")%>%
+            layout(title="Forecast Recovered Cases")
+        })
+        
         output$selected_country <- renderText({ 
           paste("You have selected", input$country)
         })
