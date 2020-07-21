@@ -7,17 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
-library(tidyverse)
-library(utils)
-library(leaflet)
-library(dplyr)
-library(rgdal)
-library(shinydashboard)
-library(tigris)
-library(plotly)
-library(forecast)
-library(lubridate)
+source('libraries.R')
 title <- tags$a(href='https://www.hs-kl.de/', target="_blank", style = "color: rgb(255,255,255); text-align: bottom",
                 tags$img(src= "https://upload.wikimedia.org/wikipedia/commons/5/5e/Logo_of_Hochschule_Kaiserslautern.png",height= '40', width= '76.8',style ="vertical-align: top"),
                 'CoVid-19')

@@ -1,4 +1,4 @@
-setwd("c:/Users/Marco/Desktop/COVID-19-Shiny-Dashboard/COVID-19-Shiny-Dashboard")
+#setwd("c:/Users/Marco/Desktop/COVID-19-Shiny-Dashboard/COVID-19-Shiny-Dashboard")
 load(".RData")
 shiny::runApp(appDir = getwd(), port = getOption("shiny.port"),
   launch.browser = getOption("shiny.launch.browser", interactive()),
