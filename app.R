@@ -7,17 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
-library(tidyverse)
-library(utils)
-library(leaflet)
-library(dplyr)
-library(rgdal)
-library(shinydashboard)
-library(tigris)
-library(plotly)
-library(forecast)
-library(lubridate)
+source('libraries.R')
 title <- tags$a(href='https://www.hs-kl.de/', target="_blank", style = "color: rgb(255,255,255); text-align: bottom",
                 tags$img(src= "https://upload.wikimedia.org/wikipedia/commons/5/5e/Logo_of_Hochschule_Kaiserslautern.png",height= '40', width= '76.8',style ="vertical-align: top"),
                 'CoVid-19')
@@ -61,23 +51,27 @@ ui <- dashboardPage(
     dashboardHeader(title=title),
     dashboardSidebar(
       sidebarMenu(
-        menuItem("Dashboard", tabName = "Map", icon = icon("dashboard")),
-        menuItem(timeslider<-sliderInput("Times",
+        menuItem("World Map", tabName = "Map", icon = icon("map")),
+        menuItem(icon=icon("calendar"),timeslider<-sliderInput("Times",
                               "Time Series",
                               min = min(data_from_github$Date),
                               max = max(data_from_github$Date),
                               value = min(data_from_github$Date),
                               timeFormat = "%d %b %Y")),
-        menuItem(country<-selectInput("country", "Choose a country:",
+        menuItem(icon=icon("globe"),country<-selectInput("country", "Choose a country:",
                              list(`Country` = unique(data_from_github$Country)
                                   )
                              
         )),
         htmlOutput("States"),
-        menuItem("Statistic", tabName = "statistic", icon = icon("list")),
-        menuItem("Forecasts", tabName = "forecasts", icon = icon("list")),
+        menuItem("Statistic", tabName = "statistic", icon = icon("chart-line")),
+        menuItem("Forecasts", tabName = "forecasts", icon = icon("chart-line")),
         
-        menuItem("Glossar", icon = icon("th"), tabName = "glossar",
+        menuItem("Glossar", icon = icon("list"), tabName = "glossar",
+                  badgeColor = "green"),
+        menuItem("Sources", icon = icon("book"), tabName = "sources",
+                 badgeLabel = "new", badgeColor = "green"),
+        menuItem("Imprint", icon = icon("info"), tabName = "imprint",
                  badgeLabel = "new", badgeColor = "green")
       )
     ),
@@ -86,7 +80,7 @@ ui <- dashboardPage(
       tabItem(tabName = "Map",
         
         fluidRow(box(title = "World Map",
-                     width = 8,
+                     width = 80,
                      height = '80vh',
                      leafletOutput(outputId = "mymap",height = '80vh')),
                  align ="center"
@@ -115,9 +109,72 @@ ui <- dashboardPage(
       tabItem(tabName = "glossar",
               
               #textOutput("selected_country"),
-              h2("Glossar"),
+              HTML('<center><h2>Glossar</h2></center>'),
              # tableOutput('glossartable')
             fig
+      ),
+      tabItem(tabName = "sources",
+              
+              HTML('<center><h2>Sources</h2></center>'),
+              tags$br(),
+              
+              HTML('<center><h2>Data from </h2></center>'),
+              HTML('<center><h3><a href="https://github.com/datasets/covid-19">Covid 19 Data Github Repository</a></h3></center>'),
+              
+              tags$br(),
+              
+              HTML('<center><h2>Glossarinformation from </h2></center>'),
+              HTML('<center><h3><a href="https://github.com/datasets/covid-19">Covid 19 Data Github Repository</a></h3></center>'),
+      ),
+      tabItem(tabName = "imprint",
+              HTML('<center><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Logo_of_Hochschule_Kaiserslautern.png" height= "100" width= "200"></center>'),
+              
+             HTML('<center><h2>Project Covid-19-Dashboard</h2></center>'),
+             
+             tags$br(),
+             
+             HTML('<center><h4>Jens Cedric Schug </h4></center>'),
+             HTML('<center><h4>Fachbereich Informatik und Mikrosystemtechnik </h4></center>'),
+             HTML('<center><h4>Hochschule Kaiserslautern </h4></center>'),
+             HTML('<center><h4>Zweibruecken, Deutschland </h4></center>'),
+             HTML('<center><h4><a href="mailto:jesc0030@stud.hs-kl.de">jesc0030@stud.hs-kl.de</a></h4></center>'),
+             
+             tags$br(),
+             
+             HTML('<center><h4>Julian Bernhart </h4></center>'),
+             HTML('<center><h4>Fachbereich Informatik und Mikrosystemtechnik </h4></center>'),
+             HTML('<center><h4>Hochschule Kaiserslautern </h4></center>'),
+             HTML('<center><h4>Zweibruecken, Deutschland </h4></center>'),
+             HTML('<center><h4><a href="mailto:jube0010@stud.hs-kl.de">jube0010@stud.hs-kl.de</a></h4></center>'),
+             
+             tags$br(),
+             
+             HTML('<center><h4>Marco Miles Noll </h4></center>'),
+             HTML('<center><h4>Fachbereich Informatik und Mikrosystemtechnik </h4></center>'),
+             HTML('<center><h4>Hochschule Kaiserslautern </h4></center>'),
+             HTML('<center><h4>Zweibruecken, Deutschland </h4></center>'),
+             HTML('<center><h4><a href="mailto:mano0010@stud.hs-kl.de">mano0010@stud.hs-kl.de</a></h4></center>'),
+             
+             tags$br(),
+             
+             HTML('<center><h4>Supervisor </h4></center>'),
+             
+             tags$br(),
+             
+             HTML('<center><h4>Prof. Dr. Manfred Brill </h4></center>'),
+             HTML('<center><h4>Fachbereich Informatik und Mikrosystemtechnik </h4></center>'),
+             HTML('<center><h4>Hochschule Kaiserslautern </h4></center>'),
+             HTML('<center><h4>Zweibruecken, Deutschland </h4></center>'),
+             HTML('<center><h4><a href="https://www.hs-kl.de/hochschule/profil/personenverzeichnis/detailanzeige-personen/person/manfred-brill">About Manfred Brill</a></h4></center>'),
+             HTML('<center><h4><a href="mailto:manfred.brill@hs-kl.de">manfred.brill@hs-kl.de</a></h4></center>'),
+             
+             
+             
+             
+             
+             
+             
+              
       )
       
     )
