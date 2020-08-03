@@ -8,7 +8,7 @@
     1. [setWorkingDirectory.R](#wd)
     1. [startShinyServer.R](#server)
     1. [Run.bat](#run)
-1. [Website](#website)
+1. [Dashboard](#dashboard)
     1. [World Map](#world_map)
     1. [Statistics](#statistics)
     1. [Forecast](#forecast)
@@ -40,8 +40,8 @@
 <a name="run"></a>
 ### Run.bat
 
-<a name="website"></a>
-## Website
+<a name="dashboard"></a>
+## Dashboard
 
 <a name="world_map"></a>
 ### World Map
