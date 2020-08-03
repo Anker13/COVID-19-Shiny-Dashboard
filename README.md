@@ -13,8 +13,6 @@
     1. [Statistics](#statistics)
     1. [Forecast](#forecast)
     1. [Glossar](#glossar)
-    1. [Sources](#sources_site)
-    1. [Imprints](#imprints_site)
 1. [Sources](#sources)
 1. [Imprint](#imprints)
 
@@ -51,10 +49,6 @@
 ### Forecast
 <a name="glossar"></a>
 ### Glossar
-<a name="sources_site"></a>
-### Sources
-<a name="imprints_site"></a>
-### Imprints
 
 <a name="sources"></a>
 ## Sources
