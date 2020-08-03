@@ -20,18 +20,21 @@
 
 <a name="introduction"></a>
 ## Indroduction
+    
 
 <a name="components"></a>
 ## Components
 
 <a name="app"></a>
 ### app.R
+    main
+
 <a name="libraries"></a>
-### libraries
+### libraries.R
 <a name="data"></a>
 ### prepareData.R
 <a name="wd"></a>
-### setWorkingDirectory
+### setWorkingDirectory.R
 <a name="server"></a>
 ### startShinyServer.R
 <a name="run"></a>
