@@ -1,4 +1,5 @@
 library(dplyr)
+source('libraries.R')
 #Static PATH to csv files from ohter github Repository
 PATH <- paste(getwd(),"/data",sep="")
 
@@ -9,12 +10,6 @@ glossar <-read.csv(path_to_glossar,sep = ";")
 data_from_github <- read.csv(path_to_data,sep = ",")
 data_from_github$Date <- as.Date(data_from_github$Date)
 data_from_github$Country.Region <- as.character(data_from_github$Country.Region)
-#data_from_github$Country.Region <- str_replace(data_from_github$Country.Region, "US", "United States")
-#data_from_github$Country.Region <- str_replace(data_from_github$Country.Region, "Congo (Brazzaville)","Democratic Republic of the Congo")
-#data_from_github$Country.Region <- str_replace(data_from_github$Country.Region, "Congo (Kinshasa)","Democratic Republic of the Congo")
-#data_from_github$Country.Region <- str_replace(data_from_github$Country.Region, "Korea, South", "Republic of Korea")
-#data_from_github$Country.Region <- str_replace(data_from_github$Country.Region, "Laos","Lao PDR")
-#data_from_github$Country.Region <- str_replace(data_from_github$Country.Region, "Russia","Russian Federation")
 colnames(data_from_github)[2]<-"Country"
 colnames(data_from_github)[3]<-"Province"
 data_from_github <- select(data_from_github,-c(Lat,Long))
@@ -74,6 +69,51 @@ data_from_github$case_fatality_rate[is.infinite(data_from_github$case_fatality_r
 data_from_github$Lat[is.na(data_from_github$Lat)]<- 0
 data_from_github$Long[is.na(data_from_github$Long)]<- 0
 
+Splitted_States_DF <- function(df){
+  df <- split(df, df$Province)
+}
+States_DF_Confirmed <- function(df){
+  df <- map(df, Forecasting_Confirmed)
+}
+States_DF_Deaths <- function(df){
+  df <- map(df, Forecasting_Deaths)
+}
+States_DF_Recovered <- function(df){
+  df <- map(df, Forecasting_Recovered)
+}
+Forecasting_Confirmed <- function(df){
+  df_TS <- structure(list(date = df$Date, confirmed = round(df$Confirmed, digits = 0)))
+  df_FIT <- auto.arima(df_TS$confirmed)
+  df <- forecast(df_FIT, h = forecast_length)
+  as.data.frame(df)
+}
+Forecasting_Deaths <- function(df){
+  df_TS <- structure(list(date = df$Date, deaths = round(df$Deaths, digits = 0)))
+  df_FIT <- auto.arima(df_TS$deaths)
+  df <- forecast(df_FIT, h = forecast_length)
+  as.data.frame(df)
+}
+
+Forecasting_Recovered <- function(df){
+  df_TS <- structure(list(date = df$Date, recovered = round(df$Recovered, digits = 0)))
+  df_FIT <- auto.arima(df_TS$recovered)
+  df <- forecast(df_FIT, h = forecast_length)
+  as.data.frame(df)
+}
+
 Splitted_Global_DF <- split(data_from_github, data_from_github$Country)
+
+Splitted_Global_DF_States <- map(Splitted_Global_DF,Splitted_States_DF)
+
+
+
+forecast_length <- 7
+Forecasts.date <- seq(as.POSIXct(Splitted_Global_DF[[1]]$Date[length(Splitted_Global_DF[[1]]$Date)]),by=Splitted_Global_DF[[1]]$Date[length(Splitted_Global_DF[[1]]$Date)]-Splitted_Global_DF[[1]]$Date[length(Splitted_Global_DF[[1]]$Date)-1], len = forecast_length)
+Forecasts_Confirmed <- map(Splitted_Global_DF_States,States_DF_Confirmed)
+Forecasts_Deaths <- map(Splitted_Global_DF_States,States_DF_Deaths)
+Forecasts_Recovered <- map(Splitted_Global_DF_States,States_DF_Recovered)
+
+
+
 
 save.image()
