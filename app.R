@@ -174,14 +174,7 @@ ui <- dashboardPage(
              HTML('<center><h4>Zweibruecken, Deutschland </h4></center>'),
              HTML('<center><h4><a href="https://www.hs-kl.de/hochschule/profil/personenverzeichnis/detailanzeige-personen/person/manfred-brill">About Manfred Brill</a></h4></center>'),
              HTML('<center><h4><a href="mailto:manfred.brill@hs-kl.de">manfred.brill@hs-kl.de</a></h4></center>'),
-             
-             
-             
-             
-             
-             
-             
-              
+
       )
       
     )
@@ -336,7 +329,20 @@ server <- function(input, output) {
         output$report <- downloadHandler(
           filename =  "report.html",
           content <- function(file){
+            tempReport <- file.path(tempdir(),"Forecast.rmd")
+            file.copy("Forecast.rmd",tempReport,overwrite = TRUE)
             
+            params <- list(Infected = Forecast_Confirmed,
+                           Recovered = Forecast_Recovered,
+                           Deceased = Forecast_Deaths,
+                           Country = unique(countrydata$Country),
+                           DownloadDate = Sys.Date(),
+                           ForecastDates = Forecasts.date)
+            
+            rmarkdown::render(tempReport, output_file = file,
+                              params = params,
+                              envir = new.env(parent=globalenv())
+                              )
           }
         )
         
