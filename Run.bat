@@ -4,7 +4,6 @@ SET dir=%~dp0
 SET R="C:\Program Files\R\R-3.6.1\bin\Rscript.exe"
 
 %R% %dir%setWorkingDirectory.R %dir%
-%R% %dir%libraries.R
 IF NOT EXIST data (
 	ECHO ###There is no directory with the name data.
 	ECHO ###The program will be cancled without the directory!

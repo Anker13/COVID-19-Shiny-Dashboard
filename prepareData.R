@@ -1,5 +1,10 @@
 library(dplyr)
-source('libraries.R')
+library(tidyverse)
+library(utils)
+library(stringi)
+library(forecast)
+library(modelr)
+library(lubridate)
 #Static PATH to csv files from ohter github Repository
 PATH <- paste(getwd(),"/data",sep="")
 
