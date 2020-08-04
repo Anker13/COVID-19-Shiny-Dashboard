@@ -65,10 +65,7 @@ ui <- dashboardPage(
                               value = min(data_from_github$Date),
                               timeFormat = "%d %b %Y")),
         menuItem(icon=icon("globe"),country<-selectInput("country", "Choose a country:",
-                             list(`Country` = unique(data_from_github$Country)
-                                  )
-                             
-        )),
+                             list(`Country` = unique(data_from_github$Country)))),
         htmlOutput("States"),
         menuItem("Statistic", tabName = "statistic", icon = icon("chart-line")),
         menuItem("Forecasts", tabName = "forecasts", icon = icon("chart-line")),
@@ -87,31 +84,85 @@ ui <- dashboardPage(
         
         fluidRow(box(title = "World Map",
                      width = 80,
-                     height = '80vh',
+                     height = '85vh',
+                     
                      leafletOutput(outputId = "mymap",height = '80vh')),
-                 align ="center"
-                 )
+                 align ="center"),
+        fluidRow(box(title="Global Infected",
+                     width= 4,
+                     textOutput("GLI"),
+                     tags$head(tags$style(
+                       "#GLI{font-size: 32px;
+                             font-weight: bold;
+                       }"))),
+                 box(title="Global Recovered",
+                     width = 4,
+                     textOutput("GLR"),
+                     tags$head(tags$style(
+                       "#GLR{font-size: 32px;
+                             font-weight: bold;
+                       }"))),
+                 box(title="Global Deceased",
+                     width = 4,
+                     textOutput("GLD"),
+                     tags$head(tags$style(
+                       "#GLD{font-size: 32px;
+                             font-weight: bold;
+                       }"))),
+                 align="center")
       ),
       tabItem(tabName = "statistic",
+              fluidRow(box(textOutput("StatsTitle"),
+                           tags$head(tags$style("#StatsTitle{font-size: 64px;
+                                            font-weight: bold;}")),
+                           width = 12,
+                           height = '10vh'),
+                       align = "center"),
               splitLayout(plotlyOutput("plot1", height = '40vh'),
                           tabBox(title = "Epidemiological measures",
-                              width = 10,
+                              width = 12,
                               height = '40vh',
                               tabPanel("Prevelance",  plotlyOutput("prevelance")),
                               tabPanel("All Case Mortality",plotlyOutput("allcasemort")),
                               tabPanel("Case Fatality Rate",plotlyOutput("casefatalityrate"))
-                              ))
+                              )),
+              fluidRow(box(title="Infected",
+                           width= 4,
+                           textOutput("LI"),
+                           tags$head(tags$style(
+                             "#LI{font-size: 32px;
+                             font-weight: bold;
+                       }"))),
+                       box(title="Recovered",
+                           width = 4,
+                           textOutput("LR"),tags$head(tags$style(
+                             "#LR{font-size: 32px;
+                             font-weight: bold;
+                       }"))),
+                       box(title="Deceased",
+                           width = 4,
+                           textOutput("LD"),tags$head(tags$style(
+                             "#LD{font-size: 32px;
+                             font-weight: bold;
+                       }"))),
+                       align = "center")
           
           
       ),
       tabItem(tabName="forecasts",
+              fluidRow(box(width = 12,
+                           textOutput("FO"),
+                           tags$head(tags$style("#FO{font-size: 64px;
+                                            font-weight: bold;}"))),
+                       align = "center"),
               tabBox(title="Forecasts",
                      width= 10,
                      height='80vh',
-                     tabPanel("Forecast Confirmed Cases",plotlyOutput("forecast_confirmed", height = '60vh')),
-                     tabPanel("Forecast Death Cases", plotlyOutput("forecast_deaths", height = '60vh')),
+                     tabPanel("Forecast Infected Cases",plotlyOutput("forecast_confirmed", height = '60vh')),
+                     tabPanel("Forecast Deceased Cases", plotlyOutput("forecast_deaths", height = '60vh')),
                      tabPanel("Forecast Recovered Cases", plotlyOutput("forecast_recovered",height = '60vh'))),
-              downloadButton("report","Generate Report")
+              tags$style(type="text/css", "#report {background-color:orange;color: black;font-family: Courier New;height:40px;width:200px;}"),
+              downloadButton("report","Save Forecast")
       ),
       tabItem(tabName = "glossar",
               
@@ -126,12 +177,13 @@ ui <- dashboardPage(
               tags$br(),
               
               HTML('<center><h2>Data from </h2></center>'),
-              HTML('<center><h3><a href="https://github.com/datasets/covid-19">Covid 19 Data Github Repository</a></h3></center>'),
+              HTML('<center><h3><a href="https://github.com/datasets/covid-19" target="_blank">Covid 19 Data Github Repository</a></h3></center>'),
               
               tags$br(),
               
               HTML('<center><h2>Glossarinformation from </h2></center>'),
-              HTML('<center><h3><a href="https://github.com/datasets/covid-19">Covid 19 Data Github Repository</a></h3></center>'),
+              HTML('<center><h3><a href="https://www.mittelbayerische.de/region/kelheim-nachrichten/diese-corona-begriffe-sollte-man-kennen-21029-art1900824.html" target="_blank">Mittelbayerischer Verlag KG</a></h3></center>'),
+              HTML('<center><h3><a href="https://www.quarks.de/gesundheit/was-die-daten-zu-corona-aussagen-und-was-nicht/" target="_blank">Westdeutscher Rundfunk Köln</a></h3></center>'),
       ),
       tabItem(tabName = "imprint",
               HTML('<center><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Logo_of_Hochschule_Kaiserslautern.png" height= "100" width= "200"></center>'),
@@ -172,7 +224,7 @@ ui <- dashboardPage(
              HTML('<center><h4>Fachbereich Informatik und Mikrosystemtechnik </h4></center>'),
              HTML('<center><h4>Hochschule Kaiserslautern </h4></center>'),
              HTML('<center><h4>Zweibruecken, Deutschland </h4></center>'),
-             HTML('<center><h4><a href="https://www.hs-kl.de/hochschule/profil/personenverzeichnis/detailanzeige-personen/person/manfred-brill">About Manfred Brill</a></h4></center>'),
+             HTML('<center><h4><a href="https://www.hs-kl.de/hochschule/profil/personenverzeichnis/detailanzeige-personen/person/manfred-brill" target="_blank">About Manfred Brill</a></h4></center>'),
              HTML('<center><h4><a href="mailto:manfred.brill@hs-kl.de">manfred.brill@hs-kl.de</a></h4></center>'),
 
       )
@@ -183,7 +235,7 @@ ui <- dashboardPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
+  
   output$States <- renderUI({
     if(length(unique(Splitted_Global_DF[[input$country]]$Province))>1){
       menuItem(province <- selectInput("state",
@@ -191,7 +243,7 @@ server <- function(input, output) {
                                        list(`State`= unique(Splitted_Global_DF[[input$country]]$Province))))  
     }
   })
-    
+  
     output$mymap <- renderLeaflet({
         tmp_data <- filter(data_from_github, data_from_github$Date == input$Times, data_from_github$Confirmed>0,data_from_github$Lat > 0 && data_from_github$Long > 0)
         qpal <- colorBin(palette = c("#FFD82E","#E8A115","#FF8E24","#E84D15","#FF1408","#761408","#5A1408"),domain = tmp_data$logarithmic, n=12)
@@ -260,40 +312,69 @@ server <- function(input, output) {
             countryselected <- Splitted_Global_DF_States[[input$country]][[input$state]]
           }
         }
+        #Generating output for global statistics 
+        global_stats <- filter(data_from_github, data_from_github$Date == input$Times)
+        output$GLI <- renderText({
+          paste("",format(sum(unique(global_stats$Confirmed)),big.mark = ".",decimal.mark = ","), sep="")
+        })
+        output$GLR <- renderText({
+          paste("",format(sum(unique(global_stats$Recovered)),big.mark = ".", decimal.mark = ","), sep="")
+        })
+        output$GLD <- renderText({
+          paste("",format(sum(unique(global_stats$Deaths)),big.mark = ".", decimal.mark = ","), sep="")
+        })
+        
+        #Generating output for local statistics
+        locale_stats <- filter(countrydata, countrydata$Date == input$Times)
+        output$LI <- renderText({
+          paste("",format(locale_stats$Confirmed, big.mark = ".", decimal.mark = ","), sep="")
+        })
+        output$LR <- renderText({
+          paste("",format(locale_stats$Recovered,big.mark = ".", decimal.mark = ","), sep="")
+        })
+        output$LD <- renderText({
+          paste("",format(locale_stats$Deaths,big.mark = ".",decimal.mark = ","), sep="")
+        })
+        
+        #Generate title for stats page
+        output$StatsTitle <- renderText({
+          unique(paste("Covid-19 Cases in ", input$country, "(Population:",countrydata$Population,")",sep = ""))
+        })
+        
       #Confirmed 
         output$plot1<- renderPlotly({
-            plot_ly(data = countrydata)%>%
-            add_lines(x= ~countrydata$Date, y = ~countrydata$Confirmed, color = I("red"), name = 'Confirmed Cases')%>%
-            add_trace(x= ~countrydata$Date, y = ~countrydata$Confirmed, color = I("red"), mode = 'markers', name = 'Confirmed',showlegend = FALSE)%>%
-            add_lines(x= ~countrydata$Date, y = ~countrydata$Recovered, color = I("chartreuse"), name = 'Recovered Cases')%>%
-            add_trace(x= ~countrydata$Date, y = ~countrydata$Recovered, color = I("chartreuse"), mode = 'markers', name ='Recovered', showlegend =FALSE)%>%
-            add_lines(x= ~countrydata$Date, y = ~countrydata$Deaths, color = I("black"), name = 'Death Cases')%>%
-            add_trace(x= ~countrydata$Date, y = ~countrydata$Deaths, color = I("black"), mode = 'markers', name = 'Death', showlegend =FALSE)%>%
-            layout(title= paste("Covid-19 Cases in ", input$country, "(Population:",countrydata$Population,")",sep = ""), xaxis = list(title="Date"), yaxis = list(title="People"))
+            plot_ly(data = countrydata, x = ~countrydata$Date)%>%
+            add_trace(y = ~countrydata$Confirmed, color = I("red"), mode = 'lines+markers', name = 'Confirmed Cases',type="scatter")%>%
+            add_trace(y = ~countrydata$Recovered, color = I("chartreuse"), mode = 'lines+markers', name ='Recovered Cases',type="scatter")%>%
+            add_trace(y = ~countrydata$Deaths, color = I("black"), mode = 'lines+markers', name = 'Deceased Cases',type="scatter")%>%
+            layout(xaxis = list(title="Date"), yaxis = list(title="People"))
             
         })
         #Prevelance plotly graph
         output$prevelance <- renderPlotly({
           
-          plot_ly(data = countrydata)%>%
-            add_lines(x = ~countrydata$Date, y = ~countrydata$prevelance_100k, name='Prevelance Value')%>%
-            add_trace(x = ~countrydata$Date, y = ~countrydata$prevelance_100k, mode='markers', name='Prevelance',showlegend=FALSE)%>%
+          plot_ly(data = countrydata, x = ~countrydata$Date)%>%
+            add_trace(y = ~countrydata$prevelance_100k, mode='lines+markers', name='Prevelance',type="scatter")%>%
             layout(title = "Prevelance", xaxis = list(title="Date"), yaxis = list(title="Prevelance (per 100.000 People)"))
         })
         # all case mortality plotly graph
         output$allcasemort <- renderPlotly({
-          plot_ly(data = countrydata)%>%
-            add_lines(x = ~countrydata$Date, y = ~countrydata$all_case_mortality_100k, name='All Case Mortality Value')%>%
-            add_trace(x = ~countrydata$Date, y = ~countrydata$all_case_mortality_100k, mode='markers', name='All Case Mortality',showlegend=FALSE)%>%
+          plot_ly(data = countrydata, x = ~countrydata$Date)%>%
+            add_trace(y = ~countrydata$all_case_mortality_100k, mode='lines+markers', name='All Case Mortality',type="scatter")%>%
             layout(title = "All Case Mortality", xaxis = list(title="Date"), yaxis = list(title="All Case Mortality"))
         })
         # case fatality rate plotly graph
         output$casefatalityrate <- renderPlotly({
-          plot_ly(data = countrydata)%>%
-            add_lines(x = ~countrydata$Date, y = ~countrydata$case_fatality_rate, name='Case Fatality Rate Value')%>%
-            add_trace(x = ~countrydata$Date, y = ~countrydata$case_fatality_rate, mode='markers', name='Case Fatality Rate',showlegend=FALSE)%>%
+          plot_ly(data = countrydata, x = ~countrydata$Date)%>%
+            add_trace(y = ~countrydata$case_fatality_rate, mode='lines+markers', name='Case Fatality Rate',type="scatter")%>%
             layout(title = "Case Fatality Rate", xaxis = list(title="Date"), yaxis = list(title="Case Fatality Rate"))
         })
+        
+        #Generate title for forecast page
+        output$FO <- renderText({
+          unique(paste("Forecasts for ", input$country,sep = ""))
+        })
+        
         # forecast for Confirmed Cases plotly graph
         output$forecast_confirmed <- renderPlotly({
           plot_ly(data = as.data.frame(Forecast_Confirmed))%>%
@@ -301,7 +382,7 @@ server <- function(input, output) {
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Confirmed$"Lo 95",digits=0), ymax = ~round(Forecast_Confirmed$"Hi 95", digits = 0), color=I("gray95"), name ="95% confidence")%>%
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Confirmed$"Lo 80",digits=0), ymax = ~round(Forecast_Confirmed$"Hi 80", digits = 0), color=I("gray80"), name ="80% confidence")%>%
             add_lines(x = ~Forecasts.date, y = ~round(Forecast_Confirmed$"Point Forecast", digits = 0), color=I("blue"), name="prediction")%>%
-            layout(title="Forecast Confirmed Cases", xaxis = list(title="Date"), yaxis = list(title="Confirmed Cases"))
+            layout(title="Forecast Infected Cases", xaxis = list(title="Date"), yaxis = list(title="Infected Cases"))
         })
         # forecast for death cases plotly graph
         output$forecast_deaths <- renderPlotly({
@@ -310,7 +391,7 @@ server <- function(input, output) {
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Deaths$"Lo 95", digits = 0), ymax = ~round(Forecast_Deaths$"Hi 95",digits=0), color=I("gray95"), name ="95% confidence")%>%
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Deaths$"Lo 80", digits = 0), ymax = ~round(Forecast_Deaths$"Hi 80",digits=0), color=I("gray80"), name ="80% confidence")%>%
             add_lines(x = ~Forecasts.date, y = ~round(Forecast_Deaths$"Point Forecast", digits=0), color=I("blue"), name="prediction")%>%
-            layout(title="Forecast Death Cases", xaxis=list(title="Date"), yaxis=list(title="Death Cases"))
+            layout(title="Deceased Death Cases", xaxis=list(title="Date"), yaxis=list(title="Deceased Cases"))
         })
         
         #forecast for resurrected cases plotly graph
