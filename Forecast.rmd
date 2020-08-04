@@ -17,7 +17,7 @@ library(tidyverse)
 library(lubridate)
 ```
 
-## Forecast Data from `r params$Country`, `r params$DownloadDate`
+## Forecast Data from `r params$Country`, download on: `r params$DownloadDate`
 ### Plot Output
 
 This report contains Forecast data for the selected Country and delivers an Overview about the Forecast. Hereinafter, the forecast data from the corresponding data are shown in the graphs below:
@@ -51,8 +51,8 @@ In this segment you will see the data visualized in different tables.
 
 #### Infected Measures Table
 ````{r Preparation, echo = FALSE}
-    val <- params$ForecastDates
-    val2 <- as.POSIXct(val, origin="1970-01-01")
+    dates <- as.Date(params$ForecastDates, origin="1970-01-01")
+    dates <- as.character(dates)
 ```
 
 ```{r Infected_Table, echo=FALSE}
@@ -63,7 +63,7 @@ plot_ly(type = 'table',
         ),
         cells = list(
           values = rbind(
-            val2,
+            dates,
             round(params$Infected$"Point Forecast", digits = 0),
             round(params$Infected$"Lo 80", digits = 0),
             round(params$Infected$"Hi 80", digits = 0),
@@ -85,7 +85,7 @@ plot_ly(type = 'table',
         ),
         cells = list(
           values = rbind(
-            as.Date(params$ForecastDates),
+            dates,
             round(params$Recovered$"Point Forecast", digits = 0),
             round(params$Recovered$"Lo 80", digits = 0),
             round(params$Recovered$"Hi 80", digits = 0),
@@ -106,7 +106,7 @@ plot_ly(type = 'table',
         ),
         cells = list(
           values = rbind(
-            val2,
+            dates,
             round(params$Deceased$"Point Forecast", digits = 0),
             round(params$Deceased$"Lo 80", digits = 0),
             round(params$Deceased$"Hi 80", digits = 0),
