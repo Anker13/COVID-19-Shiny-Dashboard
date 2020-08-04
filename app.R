@@ -104,7 +104,8 @@ ui <- dashboardPage(
                      height='80vh',
                      tabPanel("Forecast Confirmed Cases",plotlyOutput("forecast_confirmed", height = '60vh')),
                      tabPanel("Forecast Death Cases", plotlyOutput("forecast_deaths", height = '60vh')),
-                     tabPanel("Forecast Recovered Cases", plotlyOutput("forecast_recovered",height = '60vh')))
+                     tabPanel("Forecast Recovered Cases", plotlyOutput("forecast_recovered",height = '60vh'))),
+              downloadButton("report","Generate Report")
       ),
       tabItem(tabName = "glossar",
               
@@ -262,48 +263,37 @@ server <- function(input, output) {
         }
       #Confirmed 
         output$plot1<- renderPlotly({
-            ggplotly(
-              ggplot(data=countrydata)+
-                geom_line(aes(x = Date, y = Confirmed, color="Red"))+
-                geom_point(aes(x = Date, y = Confirmed, color="Red"))+
-                geom_line(aes(x = Date, y = Recovered, color="chartreuse"))+
-                geom_point(aes(x = Date, y = Recovered, color="chartreuse"))+
-                geom_line(aes(x = Date, y = Deaths, color="Black"))+
-                geom_point(aes(x = Date, y = Deaths, color="Black"))+
-                scale_color_identity(name ="Cases",
-                                     breaks =c("Red", "chartreuse", "Black"),
-                                     labels =c("Confirmed","Recovered","Deaths"),
-                                     guide = "legend")+
-                labs(title = paste("Covid-19 Cases in ", input$country, "(Population:",countrydata$Population,")",sep = ""), subtitle = format(input$Times, "%x"), y = "People", x="Date")+
-                theme(legend.position = "top")
-            )
+            plot_ly(data = countrydata)%>%
+            add_lines(x= ~countrydata$Date, y = ~countrydata$Confirmed, color = I("red"), name = 'Confirmed Cases')%>%
+            add_trace(x= ~countrydata$Date, y = ~countrydata$Confirmed, color = I("red"), mode = 'markers', name = 'Confirmed',showlegend = FALSE)%>%
+            add_lines(x= ~countrydata$Date, y = ~countrydata$Recovered, color = I("chartreuse"), name = 'Recovered Cases')%>%
+            add_trace(x= ~countrydata$Date, y = ~countrydata$Recovered, color = I("chartreuse"), mode = 'markers', name ='Recovered', showlegend =FALSE)%>%
+            add_lines(x= ~countrydata$Date, y = ~countrydata$Deaths, color = I("black"), name = 'Death Cases')%>%
+            add_trace(x= ~countrydata$Date, y = ~countrydata$Deaths, color = I("black"), mode = 'markers', name = 'Death', showlegend =FALSE)%>%
+            layout(title= paste("Covid-19 Cases in ", input$country, "(Population:",countrydata$Population,")",sep = ""), xaxis = list(title="Date"), yaxis = list(title="People"))
+            
         })
         #Prevelance plotly graph
         output$prevelance <- renderPlotly({
-          ggplotly(
-            ggplot(data=countrydata,aes(x= Date, y = prevelance_100k))+
-              geom_line()+
-              geom_point()+
-              labs(title = "Prevelance", x="Date", y="Prevelance (per 100.000 People)")
-          )
+          
+          plot_ly(data = countrydata)%>%
+            add_lines(x = ~countrydata$Date, y = ~countrydata$prevelance_100k, name='Prevelance Value')%>%
+            add_trace(x = ~countrydata$Date, y = ~countrydata$prevelance_100k, mode='markers', name='Prevelance',showlegend=FALSE)%>%
+            layout(title = "Prevelance", xaxis = list(title="Date"), yaxis = list(title="Prevelance (per 100.000 People)"))
         })
         # all case mortality plotly graph
         output$allcasemort <- renderPlotly({
-          ggplotly(
-            ggplot(data=countrydata,aes(x = Date, y = all_case_mortality_100k))+
-              geom_line()+
-              geom_point()+
-              labs(title ="All Case Mortality", x = "Date", y = "All Case Mortality (per 100.000 people)")
-          )
+          plot_ly(data = countrydata)%>%
+            add_lines(x = ~countrydata$Date, y = ~countrydata$all_case_mortality_100k, name='All Case Mortality Value')%>%
+            add_trace(x = ~countrydata$Date, y = ~countrydata$all_case_mortality_100k, mode='markers', name='All Case Mortality',showlegend=FALSE)%>%
+            layout(title = "All Case Mortality", xaxis = list(title="Date"), yaxis = list(title="All Case Mortality"))
         })
         # case fatality rate plotly graph
         output$casefatalityrate <- renderPlotly({
-          ggplotly(
-            ggplot(data=countrydata,aes(x = Date, y = case_fatality_rate))+
-              geom_line()+
-              geom_point()+
-              labs(title = "Case Fatality Rate", x = "Date", y= "Case Fatality Rate (%)")
-          )
+          plot_ly(data = countrydata)%>%
+            add_lines(x = ~countrydata$Date, y = ~countrydata$case_fatality_rate, name='Case Fatality Rate Value')%>%
+            add_trace(x = ~countrydata$Date, y = ~countrydata$case_fatality_rate, mode='markers', name='Case Fatality Rate',showlegend=FALSE)%>%
+            layout(title = "Case Fatality Rate", xaxis = list(title="Date"), yaxis = list(title="Case Fatality Rate"))
         })
         # forecast for Confirmed Cases plotly graph
         output$forecast_confirmed <- renderPlotly({
@@ -312,7 +302,7 @@ server <- function(input, output) {
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Confirmed$"Lo 95",digits=0), ymax = ~round(Forecast_Confirmed$"Hi 95", digits = 0), color=I("gray95"), name ="95% confidence")%>%
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Confirmed$"Lo 80",digits=0), ymax = ~round(Forecast_Confirmed$"Hi 80", digits = 0), color=I("gray80"), name ="80% confidence")%>%
             add_lines(x = ~Forecasts.date, y = ~round(Forecast_Confirmed$"Point Forecast", digits = 0), color=I("blue"), name="prediction")%>%
-            layout(title="Forecast Confirmed Cases")
+            layout(title="Forecast Confirmed Cases", xaxis = list(title="Date"), yaxis = list(title="Confirmed Cases"))
         })
         # forecast for death cases plotly graph
         output$forecast_deaths <- renderPlotly({
@@ -321,7 +311,7 @@ server <- function(input, output) {
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Deaths$"Lo 95", digits = 0), ymax = ~round(Forecast_Deaths$"Hi 95",digits=0), color=I("gray95"), name ="95% confidence")%>%
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Deaths$"Lo 80", digits = 0), ymax = ~round(Forecast_Deaths$"Hi 80",digits=0), color=I("gray80"), name ="80% confidence")%>%
             add_lines(x = ~Forecasts.date, y = ~round(Forecast_Deaths$"Point Forecast", digits=0), color=I("blue"), name="prediction")%>%
-            layout(title="Forecast Death Cases")
+            layout(title="Forecast Death Cases", xaxis=list(title="Date"), yaxis=list(title="Death Cases"))
         })
         
         #forecast for resurrected cases plotly graph
@@ -331,12 +321,18 @@ server <- function(input, output) {
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Recovered$"Lo 95",digits = 0), ymax = ~round(Forecast_Recovered$"Hi 95", digits = 0), color=I("gray95"), name ="95% confidence")%>%
             add_ribbons(x = ~Forecasts.date, ymin = ~round(Forecast_Recovered$"Lo 80",digits = 0), ymax = ~round(Forecast_Recovered$"Hi 80", digits = 0), color=I("gray80"), name ="80% confidence")%>%
             add_lines(x = ~Forecasts.date, y = ~round(Forecast_Recovered$"Point Forecast", digits = 0), color=I("blue"), name="prediction")%>%
-            layout(title="Forecast Recovered Cases")
+            layout(title="Forecast Recovered Cases", xaxis =list(title="Date"), yaxis=list(title="Recovered Cases"))
         })
         
         output$selected_country <- renderText({ 
           paste("You have selected", input$country)
         })
+        output$report <- downloadHandler(
+          filename =  "report.html",
+          content <- function(file){
+            
+          }
+        )
         
     })
   
