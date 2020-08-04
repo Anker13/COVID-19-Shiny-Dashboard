@@ -68,6 +68,47 @@ Contains explanations of the most important epidemiological terms.
 
 <a name="sources"></a>
 ## Sources
+* https://www.mittelbayerische.de/region/kelheim-nachrichten/diese-corona-begriffe-sollte-man-kennen-21029-art1900824.html
+* https://www.quarks.de/gesundheit/was-die-daten-zu-corona-aussagen-und-was-nicht/
 
 <a name="imprints"></a>
 ## Imprints
+
+Jens Cedric Schug   
+Fachbereich Informatik und Mikrosystemtechnik   
+Hochschule Kaiserslautern  
+Zweibruecken, Deutschland  
+<a href="mailto:jesc0030@stud.hs-kl.de">jesc0030@stud.hs-kl.de</a>  
+             
+  
+               
+Julian Bernhart  
+Fachbereich Informatik und Mikrosystemtechnik  
+Hochschule Kaiserslautern  
+Zweibruecken, Deutschland    
+<a href="mailto:jube0010@stud.hs-kl.de">jube0010@stud.hs-kl.de</a>  
+  
+  
+  
+Marco Miles Noll  
+Fachbereich Informatik und Mikrosystemtechnik  
+Hochschule Kaiserslautern  
+Zweibruecken, Deutschland  
+<a href="mailto:mano0010@stud.hs-kl.de">mano0010@stud.hs-kl.de</a>  
+             
+
+             
+### Supervisor   
+             
+
+             
+Prof. Dr. Manfred Brill   
+Fachbereich Informatik und Mikrosystemtechnik   
+Hochschule Kaiserslautern   
+Zweibruecken, Deutschland   
+<a href="https://www.hs-kl.de/hochschule/profil/personenverzeichnis/detailanzeige-personen/person/manfred-brill">About Manfred Brill</a>  
+<a href="mailto:manfred.brill@hs-kl.de">manfred.brill@hs-kl.de</a>  
+             
+             
+
+
