@@ -1,11 +1,12 @@
 ---
-title: "Forecast"
+title: "Forecast Report"
 output: html_document
 params:
   Infected: NA
   Recovered: NA
   Deceased: NA
   Country: NA
+  State: NA
   DownloadDate: NA
   ForecastDates: NA
 ---
@@ -17,10 +18,16 @@ library(tidyverse)
 library(lubridate)
 ```
 
-## Forecast Data from `r params$Country`, download on: `r params$DownloadDate`
-### Plot Output
+```{r mainpanel, echo=FALSE}
+maintitle <- paste("",params$Country,sep="")
+if(!is.na(params$State))
+  maintitle <- paste("",params$Country," (",params$State,")",sep = "")
+```
+## Forecast Data from `r maintitle`, download on: `r params$DownloadDate`
+This report contains forecast data presented in plots and tables. You can use this data to compare manually, how good the comparison was. To do this, you have to wait until one of the dates has been reached. Then go to the statistics page and compare the predicted values with the actual values. 
 
-This report contains Forecast data for the selected Country and delivers an Overview about the Forecast. Hereinafter, the forecast data from the corresponding data are shown in the graphs below:
+### Plot Output
+Hereinafter, the forecast data from the corresponding data are shown in the graphs below:
 ```{r Infected, echo=FALSE}
 plot_ly(data = params$Infected)%>%
   add_lines(x = ~params$ForecastDates, y = ~round(params$Infected$"Point Forecast",digits = 0), color = I("blue"), name = "prediction")%>%
@@ -46,14 +53,12 @@ plot_ly(data = params$Deceased)%>%
 ```
 
 ### Table Output
-
 In this segment you will see the data visualized in different tables.
-
-#### Infected Measures Table
 ````{r Preparation, echo = FALSE}
     dates <- as.Date(params$ForecastDates, origin="1970-01-01")
     dates <- as.character(dates)
 ```
+#### Infected Measures Table
 
 ```{r Infected_Table, echo=FALSE}
 plot_ly(type = 'table',
@@ -75,7 +80,6 @@ plot_ly(type = 'table',
 ```
 
 #### Recovered Measures Table
-
 
 ```{r Recovered_Table, echo=FALSE}
 plot_ly(type = 'table',

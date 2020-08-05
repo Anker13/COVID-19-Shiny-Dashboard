@@ -298,9 +298,13 @@ server <- function(input, output) {
                        popup = label)%>%
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))
         countrydata<-filter(Splitted_Global_DF[[input$country]],Splitted_Global_DF[[input$country]]$Date <= input$Times)
+        plottitle <- paste("Covid-19 Cases in ", input$country, "(Population:",countrydata$Population,")",sep = "")
+        forecasttitle <- paste("Forecasts for ", input$country,sep = "")
         if(!is_null(input$state)){
           if(input$state %in% Splitted_Global_DF[[input$country]]$Province){
             countrydata <-filter(Splitted_Global_DF_States[[input$country]][[input$state]], Splitted_Global_DF_States[[input$country]][[input$state]]$Date <= input$Times)
+            plottitle <- paste("Covid-19 Cases in ", input$country," (",input$state,")", "(Population:",countrydata$Population,")",sep = "")
+            forecasttitle <- paste("Forecasts for ", input$country," (",input$state,")",sep = "")
           }
         }
         Forecast_Confirmed <- Forecasts_Confirmed[[input$country]][[1]]
@@ -341,7 +345,7 @@ server <- function(input, output) {
         
         #Generate title for stats page
         output$StatsTitle <- renderText({
-          unique(paste("Covid-19 Cases in ", input$country, "(Population:",countrydata$Population,")",sep = ""))
+          unique(plottitle)
         })
         
       #Confirmed 
@@ -375,7 +379,7 @@ server <- function(input, output) {
         
         #Generate title for forecast page
         output$FO <- renderText({
-          unique(paste("Forecasts for ", input$country,sep = ""))
+          unique(forecasttitle)
         })
         
         # forecast for Confirmed Cases plotly graph
@@ -411,15 +415,18 @@ server <- function(input, output) {
           paste("You have selected", input$country)
         })
         output$report <- downloadHandler(
-          filename =  "report.html",
+          filename =  "Forecast-Report.html",
           content <- function(file){
             tempReport <- file.path(tempdir(),"Forecast.rmd")
             file.copy("Forecast.rmd",tempReport,overwrite = TRUE)
-            
+            exportstate <- NA
+            if(!is.null(input$state))
+              exportstate <- unique(input$state)
             params <- list(Infected = Forecast_Confirmed,
                            Recovered = Forecast_Recovered,
                            Deceased = Forecast_Deaths,
                            Country = unique(countrydata$Country),
+                           State = exportstate,
                            DownloadDate = Sys.Date(),
                            ForecastDates = Forecasts.date)
             
