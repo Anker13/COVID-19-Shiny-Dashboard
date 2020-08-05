@@ -155,14 +155,17 @@ ui <- dashboardPage(
                            tags$head(tags$style("#FO{font-size: 64px;
                                             font-weight: bold;}"))),
                        align = "center"),
-              tabBox(title="Forecasts",
+              fluidRow(tabBox(title="Forecasts",
                      width= 10,
                      height='80vh',
                      tabPanel("Forecast Infected Cases",plotlyOutput("forecast_confirmed", height = '60vh')),
                      tabPanel("Forecast Deceased Cases", plotlyOutput("forecast_deaths", height = '60vh')),
                      tabPanel("Forecast Recovered Cases", plotlyOutput("forecast_recovered",height = '60vh'))),
-              tags$style(type="text/css", "#report {background-color:orange;color: black;font-family: Courier New;height:40px;width:200px;}"),
-              downloadButton("report","Save Forecast")
+                     align = "center"),
+              fluidRow(tags$style(type="text/css", "#report {background-color:orange;color: black;font-family: Courier New;height:40px;width:200px;}"),
+                       downloadButton("report","Save Forecast"),
+                       align = "center")
+              
       ),
       tabItem(tabName = "glossar",
               
