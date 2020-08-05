@@ -84,9 +84,9 @@ ui <- dashboardPage(
         
         fluidRow(box(title = "World Map",
                      width = 80,
-                     height = '85vh',
+                     height = '65vh',
                      
-                     leafletOutput(outputId = "mymap",height = '80vh')),
+                     leafletOutput(outputId = "mymap",height = '60vh')),
                  align ="center"),
         fluidRow(box(title="Global Infected",
                      width= 4,
@@ -113,7 +113,7 @@ ui <- dashboardPage(
       ),
       tabItem(tabName = "statistic",
               fluidRow(box(textOutput("StatsTitle"),
-                           tags$head(tags$style("#StatsTitle{font-size: 64px;
+                           tags$head(tags$style("#StatsTitle{font-size: 2vw;
                                             font-weight: bold;}")),
                            width = 12,
                            height = '10vh'),
@@ -152,19 +152,18 @@ ui <- dashboardPage(
       tabItem(tabName="forecasts",
               fluidRow(box(width = 12,
                            textOutput("FO"),
-                           tags$head(tags$style("#FO{font-size: 64px;
+                           tags$head(tags$style("#FO{font-size: 2vw;
                                             font-weight: bold;}"))),
                        align = "center"),
               fluidRow(tabBox(title="Forecasts",
                      width= 10,
-                     height='80vh',
+                     height='60vh',
                      tabPanel("Forecast Infected Cases",plotlyOutput("forecast_confirmed", height = '60vh')),
                      tabPanel("Forecast Deceased Cases", plotlyOutput("forecast_deaths", height = '60vh')),
                      tabPanel("Forecast Recovered Cases", plotlyOutput("forecast_recovered",height = '60vh'))),
-                     align = "center"),
-              fluidRow(tags$style(type="text/css", "#report {background-color:orange;color: black;font-family: Courier New;height:40px;width:200px;}"),
-                       downloadButton("report","Save Forecast"),
-                       align = "center")
+                     tags$style(type="text/css", "#report {background-color:orange;color: black;font-family: Courier New;height:30px;width:200px;}"),
+                     downloadButton("report","Save Forecast"),
+                     align = "center")
               
       ),
       tabItem(tabName = "glossar",
