@@ -27,10 +27,6 @@ A project from the summer semester 2020 for the University of Applied Sciences o
 ### app.R
 The main file of the Shiny application that builds the dashboard. This script contains the code for user interface and server.
 
-<a name="libraries"></a>
-### libraries.R
-
-
 <a name="data"></a>
 ### prepareData.R
 This script contains the necessary steps to get the data in an appropriate form for plotting. Therefor data frames are created and their data types adjusted, in order to plot them. These data frames are then stored in a .RData file for further use.
