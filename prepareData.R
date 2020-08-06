@@ -107,18 +107,11 @@ Forecasting_Recovered <- function(df){
 }
 
 Splitted_Global_DF <- split(data_from_github, data_from_github$Country)
-
 Splitted_Global_DF_States <- map(Splitted_Global_DF,Splitted_States_DF)
-
-
 
 forecast_length <- 7
 Forecasts.date <- seq(as.POSIXct(Splitted_Global_DF[[1]]$Date[length(Splitted_Global_DF[[1]]$Date)]),by=Splitted_Global_DF[[1]]$Date[length(Splitted_Global_DF[[1]]$Date)]-Splitted_Global_DF[[1]]$Date[length(Splitted_Global_DF[[1]]$Date)-1], len = forecast_length)
 Forecasts_Confirmed <- map(Splitted_Global_DF_States,States_DF_Confirmed)
 Forecasts_Deaths <- map(Splitted_Global_DF_States,States_DF_Deaths)
 Forecasts_Recovered <- map(Splitted_Global_DF_States,States_DF_Recovered)
-
-
-
-
 save.image()

@@ -423,7 +423,8 @@ server <- function(input, output) {
             file.copy("Forecast.rmd",tempReport,overwrite = TRUE)
             exportstate <- NA
             if(!is.null(input$state))
-              exportstate <- unique(input$state)
+              if(input$state %in% Splitted_Global_DF[[input$country]]$Province)
+                exportstate <- unique(input$state)
             params <- list(Infected = Forecast_Confirmed,
                            Recovered = Forecast_Recovered,
                            Deceased = Forecast_Deaths,
