@@ -88,22 +88,31 @@ ui <- dashboardPage(
                      
                      leafletOutput(outputId = "mymap",height = '60vh')),
                  align ="center"),
-        fluidRow(box(title="Global Infected",
-                     width= 4,
+        fluidRow(box(title="Global Active Cases",
+                     width = 3,
+                     textOutput("GLA"),
+                     tags$head(tags$style(
+                       "#GLA{font-size: 32px;
+                             font-weight: bold;
+                             color: red;
+                       }"
+                     ))),
+                 box(title="Global Infected",
+                     width= 3,
                      textOutput("GLI"),
                      tags$head(tags$style(
                        "#GLI{font-size: 32px;
                              font-weight: bold;
                        }"))),
                  box(title="Global Recovered",
-                     width = 4,
+                     width = 3,
                      textOutput("GLR"),
                      tags$head(tags$style(
                        "#GLR{font-size: 32px;
                              font-weight: bold;
                        }"))),
                  box(title="Global Deceased",
-                     width = 4,
+                     width = 3,
                      textOutput("GLD"),
                      tags$head(tags$style(
                        "#GLD{font-size: 32px;
@@ -126,21 +135,28 @@ ui <- dashboardPage(
                                  tabPanel("Prevelance",  plotlyOutput("prevelance")),
                                  tabPanel("All Case Mortality",plotlyOutput("allcasemort")),
                                  tabPanel("Case Fatality Rate",plotlyOutput("casefatalityrate")))),
-              fluidRow(box(title="Infected",
-                           width= 4,
+              fluidRow(box(title = "Active Cases",
+                           width = 3,
+                           textOutput("LA"),
+                           tags$head(tags$style(
+                             "#LA{font-size: 32px;
+                             font-weight: bold;
+                             color: red}"))),
+                       box(title="Infected",
+                           width= 3,
                            textOutput("LI"),
                            tags$head(tags$style(
                              "#LI{font-size: 32px;
                              font-weight: bold;
                        }"))),
                        box(title="Recovered",
-                           width = 4,
+                           width = 3,
                            textOutput("LR"),tags$head(tags$style(
                              "#LR{font-size: 32px;
                              font-weight: bold;
                        }"))),
                        box(title="Deceased",
-                           width = 4,
+                           width = 3,
                            textOutput("LD"),tags$head(tags$style(
                              "#LD{font-size: 32px;
                              font-weight: bold;
@@ -323,6 +339,9 @@ server <- function(input, output) {
         }
         #Generating output for global statistics 
         global_stats <- filter(data_from_github, data_from_github$Date == input$Times)
+        output$GLA <- renderText({
+          paste("",format(sum(unique(global_stats$active_cases)),big.mark = ".",decimal.mark = ","),sep="")
+        })
         output$GLI <- renderText({
           paste("",format(sum(unique(global_stats$Confirmed)),big.mark = ".",decimal.mark = ","), sep="")
         })
@@ -335,6 +354,9 @@ server <- function(input, output) {
         
         #Generating output for local statistics
         locale_stats <- filter(countrydata, countrydata$Date == input$Times)
+        output$LA <- renderText({
+          paste("",format(locale_stats$active_cases, big.mark = ".",decimal.mark = ","),sep="")
+        })
         output$LI <- renderText({
           paste("",format(locale_stats$Confirmed, big.mark = ".", decimal.mark = ","), sep="")
         })
@@ -350,12 +372,13 @@ server <- function(input, output) {
           unique(plottitle)
         })
         
-      #Confirmed 
+        #Local Stats  
         output$plot1<- renderPlotly({
             plot_ly(data = countrydata, x = ~countrydata$Date)%>%
-            add_trace(y = ~countrydata$Confirmed, color = I("red"), mode = 'lines+markers', name = 'Confirmed Cases',type="scatter")%>%
+            add_trace(y = ~countrydata$Confirmed, color = I("red"), mode = 'lines+markers', name = 'Infected Cases',type="scatter")%>%
             add_trace(y = ~countrydata$Recovered, color = I("chartreuse"), mode = 'lines+markers', name ='Recovered Cases',type="scatter")%>%
             add_trace(y = ~countrydata$Deaths, color = I("black"), mode = 'lines+markers', name = 'Deceased Cases',type="scatter")%>%
+            add_trace(y = ~countrydata$active_cases, color = I("cyan"), mode = 'lines+markers', name = 'Active Cases',type = "scatter")%>%
             layout(xaxis = list(title="Date"), yaxis = list(title="People"))
             
         })
