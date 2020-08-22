@@ -47,6 +47,7 @@ data_from_github$logarithmic <- as.numeric(data_from_github$logarithmic)
 data_from_github <- left_join(data_from_github,population_data, by=c("Country","Province"))
 colnames(data_from_github)[15]<-"Long"
 data_from_github <- mutate(data_from_github,active_cases= Confirmed-Deaths-Recovered)
+data_from_github$Province[stri_isempty(data_from_github$Province)] <- data_from_github$Country[stri_isempty(data_from_github$Province)]
 data_from_github$active_cases[is.na(data_from_github$active_cases)]<- 0
 data_from_github$active_cases <- as.numeric(data_from_github$active_cases)
 #adding prevelance analysis. specific: Infected per 100k people. Also format digits after comma
