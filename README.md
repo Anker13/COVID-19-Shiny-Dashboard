@@ -68,7 +68,7 @@ This is a list of all the R packages used and the source of code sections that w
     1. In this project the team used the code segment "selectInput" for the country and state selection. The code was based on: https://shiny.rstudio.com/reference/shiny/latest/selectInput.html
 1. R-Package shinydashboard was used for the Appearance of the dashboard: https://rstudio.github.io/shinydashboard/
     1. In this project the "Basic" Design was used: https://rstudio.github.io/shinydashboard/get_started.html
-1. R-Package Leaflet was used for the World Map. As Code Base the team followed the instructions from the "Instruction", "Basemaps", "Markers" and "Colours" Segment from the original documentation: https://rstudio.github.io/leaflet/
+1. R-Package Leaflet was used for the World Map. As Code Base the team followed the instructions from the "Instruction", "Basemaps", "Markers" and "Colors" Segment from the original documentation: https://rstudio.github.io/leaflet/
 1. R-Package plotly was used for the diagrams in the "Statistics", "Glossar" and "Forecast" Segment of the project: https://plotly.com/r/
     1. The table in the "Glossar" segment was developed with the code base from: https://plotly.com/r/table/
     1. The diagrams in the "Statistics" and "Forecast" segment was developed with the code base from: https://plotly.com/r/axes/; https://plotly.com/r/figure-labels/ and https://plotly.com/r/legend/
