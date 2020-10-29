@@ -282,12 +282,12 @@ server <- function(input, output) {
             addTiles(urlTemplate = "https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png")%>%
             clearShapes()%>%
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))%>%
-            addCircles(data = tmp_data,
+            addCircleMarkers(data = tmp_data,
                        lng = ~Long,
                        lat = ~Lat,
                        weight = 2,
                        opacity = 1,
-                       radius = tmp_data$Confirmed,
+                       radius = tmp_data$logarithmic,
                        color = ~qpal(tmp_data$logarithmic),
                        popup = label)%>%
             addLegend("bottomright",pal = qpal,values = tmp_data$Confirmed,title = "Log Scale",opacity = 0.2)
@@ -307,12 +307,12 @@ server <- function(input, output) {
                        sep = "")
         leafletProxy("mymap",data = tmp_data)%>%
             clearShapes()%>%
-            addCircles(data = tmp_data,
+            addCircleMarkers(data = tmp_data,
                        lng = ~Long,
                        lat = ~Lat,
                        weight = 2,
                        opacity = 1,
-                       radius = tmp_data$Confirmed,
+                       radius = tmp_data$logarithmic,
                        color = ~qpal(tmp_data$logarithmic),
                        popup = label)%>%
             fitBounds(~min(Long),~min(Lat),~max(Long),~max(Lat))

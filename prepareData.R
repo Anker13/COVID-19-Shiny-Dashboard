@@ -17,7 +17,7 @@ data_from_github$Date <- as.Date(data_from_github$Date)
 data_from_github$Country.Region <- as.character(data_from_github$Country.Region)
 colnames(data_from_github)[2]<-"Country"
 colnames(data_from_github)[3]<-"Province"
-data_from_github <- select(data_from_github,-c(Lat,Long))
+#data_from_github <- select(data_from_github,-c(Lat,Long))
 #data_from_github <- from_github %>% group_by(Date,Country) %>% summarise(Lat=max(Lat),Long=max(Long),Confirmed=sum(Confirmed),Recovered=sum(Recovered),Deaths=sum(Deaths))
 data_from_github$Confirmed <- as.numeric(data_from_github$Confirmed)
 data_from_github$Recovered <- as.numeric(data_from_github$Recovered)
